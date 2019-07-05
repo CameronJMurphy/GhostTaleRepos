@@ -2,11 +2,14 @@
 
 int main() {
 	
+	int screenX = 1280;
+	int screenY = 720;
+
 	// allocation
 	auto app = new GhostsTale_v1App();
 
 	// initialise and loop
-	app->run("AIE", 1280, 720, false);
+	app->run("AIE", screenX, screenY, false);
 
 	// deallocation
 	delete app;

@@ -2,6 +2,8 @@
 
 #include "Application.h"
 #include "Renderer2D.h"
+#include "Button.h"
+
 
 class GhostsTale_v1App : public aie::Application {
 public:
@@ -16,6 +18,7 @@ public:
 	virtual void draw();
 	
 
+
 protected:
 
 	aie::Renderer2D*	m_2dRenderer;
@@ -25,8 +28,8 @@ protected:
 	aie::Texture*		ghost;
 	aie::Texture*		ghostDrop;
 	aie::Texture*		title;
-	aie::Texture*		settingsButton;
-	aie::Texture*		startButton;
+	aie::Texture*		settingsButtonTexture;
+	aie::Texture*		startButtonTexture;
 	aie::Texture*		upArrow;
 	aie::Texture*		downArrow;
 	
@@ -35,16 +38,21 @@ protected:
 
 	float m_timer;
 
-	int startButtonPosX = 650;
-	int startButtonPosY = 400;
-	int startButtonHeight = 600;
+	int startButtonPosX = getWindowWidth() / 2;
+	int startButtonPosY = getWindowWidth() / 2;
+	int startButtonHeight = 150;
 	int startButtonWidth = 300;
 
-	int settingsButtonPosX = 650;
-	int settingsButtonPosY = 250;
-	int settingsButtonHeight = 400;
-	int settingsButtonWidth = 100;
+	int settingsButtonPosX = getWindowWidth() / 2;
+	int settingsButtonPosY = getWindowWidth() / 2 - 100;
+	int settingsButtonHeight = 100;
+	int settingsButtonWidth = 200;
 
-	int ghostPosX = 0;
-	int ghostPosY = 0;
+	int ghostPosX = 50;
+	int ghostPosY = 50;
+
+	int HalfOfWindowWidth = getWindowWidth() / 2;
+	int HalfOfWindowHeight = getWindowHeight() / 2;
+	
+
 };

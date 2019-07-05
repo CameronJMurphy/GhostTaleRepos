@@ -1,11 +1,11 @@
 #include "GhostsTale_v1App.h"
-
 #include "Texture.h"
 #include "Font.h"
 #include "Input.h"
 #include <iostream>
 #include <Windows.h>
 #include <WinUser.h>
+#include "Button.h"
 
 using namespace std;
 
@@ -34,8 +34,8 @@ bool GhostsTale_v1App::startup() {
 	ghost = new aie::Texture("./textures/ghost.png");
 	ghostDrop = new aie::Texture("./textures/ghostDrop.svg.png");
 	title = new aie::Texture("./textures/Title.png");
-	settingsButton = new aie::Texture("./textures/SettingsButton.png");
-	startButton = new aie::Texture("./textures/StartButton.png");
+	settingsButtonTexture = new aie::Texture("./textures/SettingsButton.png");
+	startButtonTexture = new aie::Texture("./textures/StartButton.png");
 	upArrow = new aie::Texture("./textures/UpArrow.png");
 	downArrow = new aie::Texture("./textures/DownArrow.png");
 	
@@ -44,9 +44,13 @@ bool GhostsTale_v1App::startup() {
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
-	//printTitle();
 
 	m_timer = 0;
+
+	
+	
+	
+	
 
 
 	return true;
@@ -64,71 +68,103 @@ void GhostsTale_v1App::shutdown() {
 void GhostsTale_v1App::update(float deltaTime) {
 
 	m_timer += deltaTime;
-
-	POINT mousePos;
-	GetCursorPos(&mousePos);
-
-	// input example
 	aie::Input* input = aie::Input::getInstance();
+	const unsigned int windowHeight = getWindowHeight();
+	const unsigned int windowWidth = getWindowWidth();
 
-	
+	if (state != Game)//While it isn't game. Ive done this to improve performance while the game is running.
+	{
 
-	if (state == Title)
-	{
-		if (input->isKeyDown(aie::INPUT_KEY_ENTER))
+		system("cls");
+		//HWND hwnd;
+		//for (int i = 1; i < 20 ; i++)
+		//	hwnd = FindWindow(NULL, TEXT(""));
+		
+
+
+		//POINT mousePos;
+		//GetCursorPos(&mousePos);
+		int x, y;
+		input->getMouseXY(&x, &y);
+		
+
+		//ScreenToClient(hwnd, &mousePos);
+
+		//cout << ScreenToClient(hwnd, &mousePos);
+		cout << "x = " << x << "y = " << y << endl;
+		
+
+		
+
+
+		
+		////////////////////	TITLE	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+
+
+		if (state == Title)
 		{
-			state = Menu;
-		}
-	}
-	else if (state == Menu)
-	{
-		if (input->isKeyDown(aie::INPUT_KEY_DOWN))
-		{
-			state = Settings;
-		}
-		if (input->isKeyDown(aie::INPUT_KEY_UP))
-		{
-			state = Game;
-		}
-		if (input->isKeyDown(aie::INPUT_MOUSE_BUTTON_LEFT))//if you click start, turn state to "Game"
-		{
-			cout << "What";
-			//To tell if they clicked the start button
-			if (mousePos.x >= startButtonPosX && mousePos.x <= (startButtonPosX + startButtonWidth))
+			if (input->isKeyDown(aie::INPUT_KEY_ENTER))
 			{
-				cout << "made it this far";
-				if (mousePos.y >= startButtonPosY && mousePos.y <= (startButtonPosY + startButtonHeight))
-				{
-					cout << "we made it";
-					state = Game;
-				}
+				state = Menu;
+			}
+		}
+
+
+
+		////////////////////	Menu	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		else if (state == Menu)
+		{
+			int HalfOfWindowWidth = getWindowWidth() / 2;
+			int HalfOfWindowHeight = getWindowHeight() / 2;
+			Button StartButton(HalfOfWindowWidth, HalfOfWindowHeight, startButtonWidth, startButtonHeight);
+			Button SettingsButton(HalfOfWindowWidth, HalfOfWindowHeight - 150, settingsButtonWidth, settingsButtonHeight);
+
+			if (StartButton.IsMouseOver(x, y))
+			{
+				state = Game;
+			}
+			if (SettingsButton.IsMouseOver(x, y))
+			{
+				state = Settings;
+			}
+
+
+		}
+
+
+
+		////////////////////	SETTING		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		else if (state == Settings)
+		{
+			if (input->isKeyDown(aie::INPUT_KEY_BACKSPACE))
+			{
+				state = Menu;
 			}
 		}
 	}
-	else if (state == Settings)
-	{
-		if (input->isKeyDown(aie::INPUT_KEY_BACKSPACE))
-		{
-			state = Menu;
-		}
-	}
+
+
+	////////////////////	GAME	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	else if (state == Game)
 	{
-		if (input->isKeyDown(aie::INPUT_KEY_RIGHT))
+		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && ghostPosX < windowWidth)
 		{
-			ghostPosX += 100;
+			ghostPosX += 1;
 		}
-		if (input->isKeyDown(aie::INPUT_KEY_LEFT))
+		else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && ghostPosX > 0)
 		{
-			ghostPosX -= 100;
+			ghostPosX -= 1;
 		}
-		if (input->isKeyDown(aie::INPUT_KEY_DOWN))
+		else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && ghostPosY > 0)
 		{
-			ghostPosY += 100;
+			ghostPosY -= 1;
 		}
-		if (input->isKeyDown(aie::INPUT_KEY_UP))
+		else if (input->isKeyDown(aie::INPUT_KEY_UP) && ghostPosY < windowHeight)
 		{
-			ghostPosY -= 100;
+			ghostPosY += 1;
 		}
 	}
 
@@ -143,35 +179,60 @@ void GhostsTale_v1App::draw() {
 	// wipe the screen to the background colour
 	clearScreen();
 
+
 	// begin drawing sprites
 	m_2dRenderer->begin();
 
 	// draw your stuff here!
+	int x, y;
+	aie::Input* input = aie::Input::getInstance();
+	input->getMouseXY(&x, &y);
+	int HalfOfWindowWidth = getWindowWidth() / 2;
+	int HalfOfWindowHeight = getWindowHeight() / 2;
+	Button StartButton(HalfOfWindowWidth, HalfOfWindowHeight, startButtonWidth, startButtonHeight);
+	Button SettingsButton(HalfOfWindowWidth, HalfOfWindowHeight - 150, settingsButtonWidth, settingsButtonHeight);
+	
+
+	
+
 	switch (state)
 	{
 	case Title:
 
-		m_2dRenderer->drawSprite(ghost, 600, 200, 100, 100);
-		m_2dRenderer->drawSprite(pacman, 420, 200, 100, 100);
-		m_2dRenderer->drawSprite(ghostDrop, 700, 200, 30, 30);
-		m_2dRenderer->drawSprite(ghostDrop, 800, 200, 30, 30);
-		m_2dRenderer->drawSprite(ghostDrop, 900, 200, 30, 30);
-		m_2dRenderer->drawSprite(title, 650, 500, 600, 300);
-		m_2dRenderer->drawText(m_font, "Press Enter to continue", 450, 320);
+		m_2dRenderer->drawSprite(ghost, getWindowWidth() / 2 - 100, getWindowHeight() / 2 - 150, 100, 100);
+		m_2dRenderer->drawSprite(pacman, getWindowWidth() / 2 - 250, getWindowHeight() / 2 - 150, 100, 100);
+		m_2dRenderer->drawSprite(ghostDrop, getWindowWidth() / 2, getWindowHeight() / 2 - 150, 30, 30);
+		m_2dRenderer->drawSprite(ghostDrop, getWindowWidth() / 2 + 100, getWindowHeight() / 2 - 150, 30, 30);
+		m_2dRenderer->drawSprite(ghostDrop, getWindowWidth() / 2 + 200, getWindowHeight() / 2 -150, 30, 30);
+		m_2dRenderer->drawSprite(title, getWindowWidth() / 2, getWindowHeight() - 250, 600, 300);
+		m_2dRenderer->drawText(m_font, "Press Enter to continue", getWindowWidth() / 2 - 200, getWindowHeight() - 450);
 
 		break;
 
 	case Menu:
 		//print menu
-		m_2dRenderer->drawSprite(ghost,650, 600, 100, 100);
-		m_2dRenderer->drawSprite(startButton, startButtonPosX, startButtonPosY, startButtonHeight, startButtonWidth);
-		m_2dRenderer->drawSprite(settingsButton, settingsButtonPosX, settingsButtonPosY, settingsButtonHeight, settingsButtonWidth);
+		/*startButtonPosX = getWindowWidth() / 2;
+		startButtonPosY = getWindowHeight() / 2;
+
+		settingsButtonPosX = getWindowWidth() / 2;
+		settingsButtonPosY =(getWindowHeight() / 2) - 150;
+
+		m_2dRenderer->drawSprite(ghost, getWindowWidth() / 2, (getWindowHeight() / 2) + 150, 100, 100);
+		m_2dRenderer->drawSprite(startButtonTexture, startButtonPosX, startButtonPosY, startButtonWidth, startButtonHeight);
+		m_2dRenderer->drawSprite(settingsButtonTexture, settingsButtonPosX, settingsButtonPosY, settingsButtonWidth, settingsButtonHeight);*/
+		
+		
+
+		StartButton.Draw(m_2dRenderer, startButtonTexture);
+		SettingsButton.Draw(m_2dRenderer, settingsButtonTexture);
+
+
+
+
 		break;
 	case Settings:
 		//print settings 
-		
-		
-		
+
 		//music up and down arrows
 		m_2dRenderer->drawText(m_font, "Music volume", 650, 500);
 		m_2dRenderer->drawSprite(upArrow, 650, 600, 100, 100);
@@ -183,15 +244,17 @@ void GhostsTale_v1App::draw() {
 		break;
 	case Game:
 		//startGame
-		cout << "hello";
-		m_2dRenderer->drawSprite(ghost, ghostPosX, ghostPosY, 100, 100);
+		m_2dRenderer->drawSprite(ghost, ghostPosX, ghostPosY, 50, 50);
 		break;
 	}
 
 	// output some text, uses the last used colour
 	char fps[32];
 	sprintf_s(fps, 32, "FPS: %i", getFPS());
-	m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
+	if (state != Game)
+	{
+		m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
+	}
 
 	// done drawing sprites
 	m_2dRenderer->end();
