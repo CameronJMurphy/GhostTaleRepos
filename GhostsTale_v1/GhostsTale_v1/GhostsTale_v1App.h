@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Renderer2D.h"
 #include "Button.h"
+#include "Ghost.h"
 
 
 class GhostsTale_v1App : public aie::Application {
@@ -16,6 +17,7 @@ public:
 
 	virtual void update(float deltaTime);
 	virtual void draw();
+
 	
 
 
@@ -25,13 +27,17 @@ protected:
 	aie::Font*			m_font;
 	aie::Texture*		wallTile;
 	aie::Texture*		pacman;
-	aie::Texture*		ghost;
+	aie::Texture*		ghostTexture;
 	aie::Texture*		ghostDrop;
 	aie::Texture*		title;
 	aie::Texture*		settingsButtonTexture;
 	aie::Texture*		startButtonTexture;
 	aie::Texture*		upArrow;
 	aie::Texture*		downArrow;
+	
+	ghost* player;
+
+	int lastButtonPress;
 	
 
 	int state = 0;

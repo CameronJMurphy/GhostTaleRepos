@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <WinUser.h>
 #include "Button.h"
+#include "Ghost.h"
 
 using namespace std;
 
@@ -31,13 +32,15 @@ bool GhostsTale_v1App::startup() {
 	//setup textures
 	wallTile = new aie::Texture("./textures/grass.png");
 	pacman = new aie::Texture("./textures/pacman.png");
-	ghost = new aie::Texture("./textures/ghost.png");
+	ghostTexture = new aie::Texture("./textures/ghost.png");
 	ghostDrop = new aie::Texture("./textures/ghostDrop.svg.png");
 	title = new aie::Texture("./textures/Title.png");
 	settingsButtonTexture = new aie::Texture("./textures/SettingsButton.png");
 	startButtonTexture = new aie::Texture("./textures/StartButton.png");
 	upArrow = new aie::Texture("./textures/UpArrow.png");
 	downArrow = new aie::Texture("./textures/DownArrow.png");
+
+	player = new ghost();
 	
 
 	// TODO: remember to change this when redistributing a build!
@@ -62,7 +65,7 @@ void GhostsTale_v1App::shutdown() {
 	delete m_2dRenderer;
 	delete wallTile;
 	delete pacman;
-	delete ghost;
+	delete ghostTexture;
 }
 
 void GhostsTale_v1App::update(float deltaTime) {
@@ -134,7 +137,7 @@ void GhostsTale_v1App::update(float deltaTime) {
 
 
 
-		////////////////////	SETTING		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////	SETTINGS	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		else if (state == Settings)
 		{
@@ -150,21 +153,60 @@ void GhostsTale_v1App::update(float deltaTime) {
 
 	else if (state == Game)
 	{
-		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && ghostPosX < windowWidth)
+		//basic movement
+		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth)
 		{
-			ghostPosX += 1;
+			player->moveRight();
+			lastButtonPress = aie::INPUT_KEY_RIGHT;
 		}
-		else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && ghostPosX > 0)
+		else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && player->xPos() > 0)
 		{
-			ghostPosX -= 1;
+			player->moveLeft();
+			lastButtonPress = aie::INPUT_KEY_LEFT;
+
 		}
-		else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && ghostPosY > 0)
+		else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && player->yPos() > 0)
 		{
-			ghostPosY -= 1;
+			player->moveDown();
+			lastButtonPress = aie::INPUT_KEY_DOWN;
+
 		}
-		else if (input->isKeyDown(aie::INPUT_KEY_UP) && ghostPosY < windowHeight)
+		else if (input->isKeyDown(aie::INPUT_KEY_UP) && player->yPos() < windowHeight)
 		{
-			ghostPosY += 1;
+			player->moveUp();
+			lastButtonPress = aie::INPUT_KEY_UP;
+
+		}
+		else // this just continues the players movement even if they're not holding a key. It will continue their last button press
+		{
+			switch(lastButtonPress)
+			{
+			case(aie::INPUT_KEY_RIGHT):
+				{
+				if(player->xPos() < windowWidth)
+					player->moveRight();
+				}
+				break;
+			case(aie::INPUT_KEY_LEFT):
+			{
+				if(player->xPos() > 0)
+					player->moveLeft();
+			}
+			break;
+			case(aie::INPUT_KEY_DOWN):
+			{
+				if(player->yPos() > 0)
+					player->moveDown();
+			}
+			break;
+			case(aie::INPUT_KEY_UP):
+			{
+				if(player->yPos() < windowHeight)
+					player->moveUp();
+			}
+			break;
+
+			}
 		}
 	}
 
@@ -199,7 +241,7 @@ void GhostsTale_v1App::draw() {
 	{
 	case Title:
 
-		m_2dRenderer->drawSprite(ghost, getWindowWidth() / 2 - 100, getWindowHeight() / 2 - 150, 100, 100);
+		m_2dRenderer->drawSprite(ghostTexture, getWindowWidth() / 2 - 100, getWindowHeight() / 2 - 150, 100, 100);
 		m_2dRenderer->drawSprite(pacman, getWindowWidth() / 2 - 250, getWindowHeight() / 2 - 150, 100, 100);
 		m_2dRenderer->drawSprite(ghostDrop, getWindowWidth() / 2, getWindowHeight() / 2 - 150, 30, 30);
 		m_2dRenderer->drawSprite(ghostDrop, getWindowWidth() / 2 + 100, getWindowHeight() / 2 - 150, 30, 30);
@@ -211,23 +253,9 @@ void GhostsTale_v1App::draw() {
 
 	case Menu:
 		//print menu
-		/*startButtonPosX = getWindowWidth() / 2;
-		startButtonPosY = getWindowHeight() / 2;
-
-		settingsButtonPosX = getWindowWidth() / 2;
-		settingsButtonPosY =(getWindowHeight() / 2) - 150;
-
-		m_2dRenderer->drawSprite(ghost, getWindowWidth() / 2, (getWindowHeight() / 2) + 150, 100, 100);
-		m_2dRenderer->drawSprite(startButtonTexture, startButtonPosX, startButtonPosY, startButtonWidth, startButtonHeight);
-		m_2dRenderer->drawSprite(settingsButtonTexture, settingsButtonPosX, settingsButtonPosY, settingsButtonWidth, settingsButtonHeight);*/
 		
-		
-
 		StartButton.Draw(m_2dRenderer, startButtonTexture);
 		SettingsButton.Draw(m_2dRenderer, settingsButtonTexture);
-
-
-
 
 		break;
 	case Settings:
@@ -244,7 +272,7 @@ void GhostsTale_v1App::draw() {
 		break;
 	case Game:
 		//startGame
-		m_2dRenderer->drawSprite(ghost, ghostPosX, ghostPosY, 50, 50);
+		m_2dRenderer->drawSprite(ghostTexture, player->xPos(), player->yPos(), 50, 50);
 		break;
 	}
 
