@@ -4,6 +4,7 @@
 #include "Renderer2D.h"
 #include "Button.h"
 #include "Ghost.h"
+#include "Map.h"
 
 
 class GhostsTale_v1App : public aie::Application {
@@ -36,6 +37,8 @@ protected:
 	aie::Texture*		downArrow;
 	
 	ghost* player;
+	Map* level;
+
 
 	int lastButtonPress;
 	

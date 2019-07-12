@@ -7,6 +7,7 @@
 #include <WinUser.h>
 #include "Button.h"
 #include "Ghost.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -41,6 +42,8 @@ bool GhostsTale_v1App::startup() {
 	downArrow = new aie::Texture("./textures/DownArrow.png");
 
 	player = new ghost();
+
+	level = new Map(getWindowWidth(), getWindowHeight());
 	
 
 	// TODO: remember to change this when redistributing a build!
@@ -66,6 +69,7 @@ void GhostsTale_v1App::shutdown() {
 	delete wallTile;
 	delete pacman;
 	delete ghostTexture;
+	delete player;
 }
 
 void GhostsTale_v1App::update(float deltaTime) {
@@ -79,26 +83,11 @@ void GhostsTale_v1App::update(float deltaTime) {
 	{
 
 		system("cls");
-		//HWND hwnd;
-		//for (int i = 1; i < 20 ; i++)
-		//	hwnd = FindWindow(NULL, TEXT(""));
-		
-
-
-		//POINT mousePos;
-		//GetCursorPos(&mousePos);
+	
 		int x, y;
 		input->getMouseXY(&x, &y);
-		
-
-		//ScreenToClient(hwnd, &mousePos);
-
-		//cout << ScreenToClient(hwnd, &mousePos);
 		cout << "x = " << x << "y = " << y << endl;
-		
-
-		
-
+	
 
 		
 		////////////////////	TITLE	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +143,10 @@ void GhostsTale_v1App::update(float deltaTime) {
 	else if (state == Game)
 	{
 		//basic movement
+
+		int currentPos = level->getTile(player->xPos(), player->yPos());
+
+		//find out player co ords in relation to the map class
 		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth)
 		{
 			player->moveRight();
@@ -273,12 +266,14 @@ void GhostsTale_v1App::draw() {
 	case Game:
 		//startGame
 		m_2dRenderer->drawSprite(ghostTexture, player->xPos(), player->yPos(), 50, 50);
+		level->print(m_2dRenderer, wallTile, getWindowHeight() / 21, getWindowHeight() / 21, ghostDrop);
+		
 		break;
 	}
 
 	// output some text, uses the last used colour
-	char fps[32];
-	sprintf_s(fps, 32, "FPS: %i", getFPS());
+	char fps[64];
+	sprintf_s(fps, 64, "FPS: %i", getFPS());
 	if (state != Game)
 	{
 		m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
