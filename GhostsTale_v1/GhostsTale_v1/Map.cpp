@@ -21,8 +21,8 @@ Map::~Map()
 
 int Map::getTile(float posX, float posY)
 {
-	int x = posX / windowX * MapWidth;
-	int y = posY / windowY * MapLength;
+	int x = (posX / windowY * MapWidth);
+	int y =  (posY / windowY * MapLength);
 
 	return level[y][x];
 }

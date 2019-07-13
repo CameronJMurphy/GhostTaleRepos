@@ -146,56 +146,61 @@ void GhostsTale_v1App::update(float deltaTime) {
 		//basic movement
 
 		int currentPos = level->getTile(player->xPos(), player->yPos());
+		float buffer = (getWindowHeight() / 21) / 2;//half of player size
+
+		//figure out what surrounding tiles of the player are
+		int tileToRight = level->getTile(player->xPos() + buffer, player->yPos());
+		int tileToLeft = level->getTile(player->xPos() - buffer, player->yPos());
+		int tileDown = level->getTile(player->xPos(), player->yPos() - buffer);
+		int tileUp = level->getTile(player->xPos(), player->yPos() + buffer);
 
 		//find out player co ords in relation to the map class
-		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth)
+		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth && tileToRight != 1) // if they input right, it cannot move offscreen & cant move into a tile square
 		{
 			player->moveRight();
 			lastButtonPress = aie::INPUT_KEY_RIGHT;
 		}
-		else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && player->xPos() > 0)
+		else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && player->xPos() > 0 && tileToLeft != 1)
 		{
 			player->moveLeft();
 			lastButtonPress = aie::INPUT_KEY_LEFT;
-
 		}
-		else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && player->yPos() > 0)
+		else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && player->yPos() > 0 && tileDown != 1)
 		{
 			player->moveDown();
 			lastButtonPress = aie::INPUT_KEY_DOWN;
-
 		}
-		else if (input->isKeyDown(aie::INPUT_KEY_UP) && player->yPos() < windowHeight)
+		else if (input->isKeyDown(aie::INPUT_KEY_UP) && player->yPos() < windowHeight && tileUp != 1)
 		{
 			player->moveUp();
-			lastButtonPress = aie::INPUT_KEY_UP;
-
+			lastButtonPress = aie::INPUT_KEY_UP;			
 		}
+
 		else // this just continues the players movement even if they're not holding a key. It will continue their last button press
 		{
 			switch(lastButtonPress)
 			{
 			case(aie::INPUT_KEY_RIGHT):
 				{
-				if(player->xPos() < windowWidth)
+				if(player->xPos() < windowWidth && tileToRight != 1)
 					player->moveRight();
 				}
 				break;
 			case(aie::INPUT_KEY_LEFT):
 			{
-				if(player->xPos() > 0)
+				if(player->xPos() > 0 && tileToLeft != 1)
 					player->moveLeft();
 			}
 			break;
 			case(aie::INPUT_KEY_DOWN):
 			{
-				if(player->yPos() > 0)
+				if(player->yPos() > 0 && tileDown != 1)
 					player->moveDown();
 			}
 			break;
 			case(aie::INPUT_KEY_UP):
 			{
-				if(player->yPos() < windowHeight)
+				if(player->yPos() < windowHeight && tileUp != 1)
 					player->moveUp();
 			}
 			break;
@@ -266,7 +271,7 @@ void GhostsTale_v1App::draw() {
 		break;
 	case Game:
 		//startGame
-		m_2dRenderer->drawSprite(ghostTexture, player->xPos(), player->yPos(), 50, 50);
+		m_2dRenderer->drawSprite(ghostTexture, player->xPos(), player->yPos(), getWindowHeight() / 21, getWindowHeight()/21);
 		level->print(m_2dRenderer, wallTile, getWindowHeight() / 21, getWindowHeight() / 21, ghostDrop);
 		
 		break;

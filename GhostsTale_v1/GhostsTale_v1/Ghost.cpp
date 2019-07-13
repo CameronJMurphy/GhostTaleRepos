@@ -38,3 +38,13 @@ void ghost::moveUp()
 {
 	posY += .1;
 }
+
+bool ghost::moving()
+{
+	return isMoving;
+}
+
+void ghost::setMoving(bool answer)
+{
+	isMoving = answer;
+}
