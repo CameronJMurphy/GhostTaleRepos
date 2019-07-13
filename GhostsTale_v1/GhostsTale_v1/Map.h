@@ -44,7 +44,7 @@ private:
 
 public:
 
-	Map(float windowWidth, float windowHeight) : windowX(windowWidth), windowY(windowHieght);
+	Map(float windowWidth, float windowHeight);
 
 	~Map();
 

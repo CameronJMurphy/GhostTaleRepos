@@ -9,7 +9,7 @@ enum
 	ghostDrop = 8
 };
 
-Map::Map(float windowWidth, float windowHeight)
+Map::Map(float windowWidth, float windowHeight) : windowX(windowWidth), windowY(windowHeight)
 {
 
 }

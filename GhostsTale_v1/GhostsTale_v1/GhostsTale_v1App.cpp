@@ -70,6 +70,7 @@ void GhostsTale_v1App::shutdown() {
 	delete pacman;
 	delete ghostTexture;
 	delete player;
+	delete level;
 }
 
 void GhostsTale_v1App::update(float deltaTime) {
