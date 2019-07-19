@@ -48,3 +48,9 @@ void ghost::setMoving(bool answer)
 {
 	isMoving = answer;
 }
+
+void ghost::reset()
+{
+	posX = startX;
+	posY = startY;
+}

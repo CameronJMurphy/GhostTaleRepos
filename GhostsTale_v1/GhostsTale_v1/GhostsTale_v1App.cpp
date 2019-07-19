@@ -8,6 +8,7 @@
 #include "Button.h"
 #include "Ghost.h"
 #include "Map.h"
+#include "pacman.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ bool GhostsTale_v1App::startup() {
 	m_2dRenderer = new aie::Renderer2D();
 	//setup textures
 	wallTile = new aie::Texture("./textures/grass.png");
-	pacman = new aie::Texture("./textures/pacman.png");
+	pacmanTexture = new aie::Texture("./textures/pacman.png");
 	ghostTexture = new aie::Texture("./textures/ghost.png");
 	ghostDrop = new aie::Texture("./textures/ghostDrop.svg.png");
 	title = new aie::Texture("./textures/Title.png");
@@ -44,6 +45,11 @@ bool GhostsTale_v1App::startup() {
 	player = new ghost();
 
 	level = new Map(getWindowWidth(), getWindowHeight());
+
+	pacman1 = new Pacman(level,200,200);
+	pacman2 = new Pacman(level, 600,600);
+	pacman3 = new Pacman(level, 600, 200);
+	pacman4 = new Pacman(level, 200, 600);
 	
 
 	// TODO: remember to change this when redistributing a build!
@@ -53,10 +59,6 @@ bool GhostsTale_v1App::startup() {
 
 	m_timer = 0;
 
-	
-	
-	
-	
 
 
 	return true;
@@ -67,10 +69,14 @@ void GhostsTale_v1App::shutdown() {
 	delete m_font;
 	delete m_2dRenderer;
 	delete wallTile;
-	delete pacman;
+	delete pacmanTexture;
 	delete ghostTexture;
 	delete player;
 	delete level;
+	delete pacman1;
+	delete pacman2;
+	delete pacman3;
+	delete pacman4;
 }
 
 void GhostsTale_v1App::update(float deltaTime) {
@@ -143,7 +149,7 @@ void GhostsTale_v1App::update(float deltaTime) {
 
 	else if (state == Game)
 	{
-		//basic movement
+		
 
 		int currentPos = level->getTile(player->xPos(), player->yPos());
 		float buffer = (getWindowHeight() / 21) / 2;//half of player size
@@ -153,6 +159,34 @@ void GhostsTale_v1App::update(float deltaTime) {
 		int tileToLeft = level->getTile(player->xPos() - buffer, player->yPos());
 		int tileDown = level->getTile(player->xPos(), player->yPos() - buffer);
 		int tileUp = level->getTile(player->xPos(), player->yPos() + buffer);
+
+
+		//if any of the pacman are touching the player, you lose the game
+		if (player->xPos() > pacman1->currentX() - 1 && player->xPos() < pacman1->currentX() + 1 &&
+			player->yPos() > pacman1->currentY() - 1 && player->yPos() < pacman1->currentY() + 1 ||
+			player->xPos() > pacman2->currentX() - 1 && player->xPos() < pacman2->currentX() + 1 &&
+			player->yPos() > pacman2->currentY() - 1 && player->yPos() < pacman2->currentY() + 1 ||
+			player->xPos() > pacman3->currentX() - 1 && player->xPos() < pacman3->currentX() + 1 &&
+			player->yPos() > pacman3->currentY() - 1 && player->yPos() < pacman3->currentY() + 1 ||
+			player->xPos() > pacman4->currentX() - 1 && player->xPos() < pacman4->currentX() + 1 &&
+			player->yPos() > pacman4->currentY() - 1 && player->yPos() < pacman4->currentY() + 1)
+		{
+			//reset game
+			state = Menu;
+			pacman1->reset();
+			pacman2->reset();
+			pacman3->reset();
+			pacman4->reset();
+			player->reset();
+			lastButtonPress = 0;
+		}
+		
+
+		//pacman moves towards player
+		pacman1->move(player->xPos(), player->yPos(), buffer);
+		pacman2->move(player->xPos(), player->yPos(), buffer);
+		pacman3->move(player->xPos(), player->yPos(), buffer);
+		pacman4->move(player->xPos(), player->yPos(), buffer);
 
 		//find out player co ords in relation to the map class
 		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth && tileToRight != 1) // if they input right, it cannot move offscreen & cant move into a tile square
@@ -224,6 +258,8 @@ void GhostsTale_v1App::draw() {
 	// begin drawing sprites
 	m_2dRenderer->begin();
 
+	float tileSize = getWindowHeight() / 21;
+
 	// draw your stuff here!
 	int x, y;
 	aie::Input* input = aie::Input::getInstance();
@@ -241,7 +277,7 @@ void GhostsTale_v1App::draw() {
 	case Title:
 
 		m_2dRenderer->drawSprite(ghostTexture, getWindowWidth() / 2 - 100, getWindowHeight() / 2 - 150, 100, 100);
-		m_2dRenderer->drawSprite(pacman, getWindowWidth() / 2 - 250, getWindowHeight() / 2 - 150, 100, 100);
+		m_2dRenderer->drawSprite(pacmanTexture, getWindowWidth() / 2 - 250, getWindowHeight() / 2 - 150, 100, 100);
 		m_2dRenderer->drawSprite(ghostDrop, getWindowWidth() / 2, getWindowHeight() / 2 - 150, 30, 30);
 		m_2dRenderer->drawSprite(ghostDrop, getWindowWidth() / 2 + 100, getWindowHeight() / 2 - 150, 30, 30);
 		m_2dRenderer->drawSprite(ghostDrop, getWindowWidth() / 2 + 200, getWindowHeight() / 2 -150, 30, 30);
@@ -271,8 +307,13 @@ void GhostsTale_v1App::draw() {
 		break;
 	case Game:
 		//startGame
-		m_2dRenderer->drawSprite(ghostTexture, player->xPos(), player->yPos(), getWindowHeight() / 21, getWindowHeight()/21);
-		level->print(m_2dRenderer, wallTile, getWindowHeight() / 21, getWindowHeight() / 21, ghostDrop);
+		level->print(m_2dRenderer, wallTile, tileSize, tileSize, ghostDrop);
+		m_2dRenderer->drawSprite(ghostTexture, player->xPos(), player->yPos(), tileSize, tileSize);//print ghost
+		m_2dRenderer->drawSprite(pacmanTexture, pacman1->currentX(), pacman1->currentY(), tileSize, tileSize);//print pacman1
+		m_2dRenderer->drawSprite(pacmanTexture, pacman2->currentX(), pacman2->currentY(), tileSize, tileSize);//print pacman2
+		m_2dRenderer->drawSprite(pacmanTexture, pacman3->currentX(), pacman3->currentY(), tileSize, tileSize);//print pacman3
+		m_2dRenderer->drawSprite(pacmanTexture, pacman4->currentX(), pacman4->currentY(), tileSize, tileSize);//print pacman1
+		
 		
 		break;
 	}

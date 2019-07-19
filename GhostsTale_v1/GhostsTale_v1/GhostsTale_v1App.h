@@ -5,6 +5,7 @@
 #include "Button.h"
 #include "Ghost.h"
 #include "Map.h"
+#include "pacman.h"
 
 
 class GhostsTale_v1App : public aie::Application {
@@ -27,7 +28,7 @@ protected:
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
 	aie::Texture*		wallTile;
-	aie::Texture*		pacman;
+	aie::Texture*		pacmanTexture;
 	aie::Texture*		ghostTexture;
 	aie::Texture*		ghostDrop;
 	aie::Texture*		title;
@@ -38,7 +39,10 @@ protected:
 	
 	ghost* player;
 	Map* level;
-
+	Pacman* pacman1;
+	Pacman* pacman2;
+	Pacman* pacman3;
+	Pacman* pacman4;
 
 	int lastButtonPress;
 	
