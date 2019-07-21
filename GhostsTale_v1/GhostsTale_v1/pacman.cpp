@@ -25,22 +25,22 @@ void Pacman::move(float playerPosX, float playerPosY, float buffer)
 	
 	if (playerPosX > currentPosX && tileToRight != 1)
 	{
-		currentPosX += .05;//slower speed than the player, move Right
+		currentPosX += .01;//slower speed than the player, move Right
 		moved = true;
 	}
 	if (playerPosY > currentPosY && tileUp != 1)
 	{
-		currentPosY += .05;//move Up
+		currentPosY += .01;//move Up
 		moved = true;
 	}
 	if (playerPosX < currentPosX && tileToLeft != 1)
 	{
-		currentPosX -= .05;//move Left
+		currentPosX -= .01;//move Left
 		moved = true;
 	}
 	if (playerPosY < currentPosY && tileDown != 1)
 	{
-		currentPosY -= .05;// move Down
+		currentPosY -= .01;// move Down
 		moved = true;
 	}
 

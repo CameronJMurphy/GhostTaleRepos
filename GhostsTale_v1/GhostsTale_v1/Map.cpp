@@ -2,6 +2,8 @@
 #include "Renderer2D.h"
 #include "Texture.h"
 
+
+
 enum
 {
 	empty = 0,
@@ -57,5 +59,59 @@ void Map::print(aie::Renderer2D* r, aie::Texture* wall,	float blockSizeX, float 
 
 void Map::updateMap(int posX, int posY, int change)
 {
+	int x = (posX / windowY * MapWidth);
+	int y = (posY / windowY * MapLength);
 
+	level[y][x] = change;
+}
+
+void Map::resetLevel()
+{
+	for (int row = 0; row < MapLength; row++)
+	{
+		for (int col = 0; col < MapWidth; col++)
+		{
+			level[row][col] = baseLevel[row][col];
+		}
+	}
+}
+
+bool Map::ghostDropsRemaining()
+{
+	for (int row = 0; row < MapLength; row++)
+	{
+		for (int col = 0; col < MapWidth; col++)
+		{
+			if (level[row][col] == 8)
+				return true;
+		}
+	}
+	return false;
+}
+
+void Map::teleportPlayer(ghost* player, std::string direction,float windowWidth, float windowHeight, float tileSize)//this function teleports the player to the other side of the screen
+{
+
+	if (direction == "right")
+	{
+		player->setXPos(0);
+		player->setYPos(windowHeight/2 + tileSize);// we add tile size because the map is off centre
+	}
+	else
+	{
+		player->setXPos(tileSize * 21);//this is the length of the map
+		player->setYPos(windowHeight / 2 + tileSize);
+	}
+}
+
+int Map::levelXpos(float posX)//this returns the X pos of level at position 'pos'
+{
+	int x = (posX / windowY * MapWidth);
+	return x;
+}
+
+int Map::levelYpos(float posY) // this returns the Y pos of level at position 'pos'
+{
+	int y = (posY / windowY * MapLength);
+	return y;
 }

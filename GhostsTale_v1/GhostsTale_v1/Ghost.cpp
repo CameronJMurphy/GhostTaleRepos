@@ -39,18 +39,27 @@ void ghost::moveUp()
 	posY += .1;
 }
 
-bool ghost::moving()
-{
-	return isMoving;
-}
-
-void ghost::setMoving(bool answer)
-{
-	isMoving = answer;
-}
-
 void ghost::reset()
 {
 	posX = startX;
 	posY = startY;
+}
+
+void ghost::collectDrop()
+{
+	++ghostDrops;
+}
+
+int ghost::currentDrops()
+{
+	return ghostDrops;
+}
+
+void ghost::setXPos(float newPos)
+{
+	posX = newPos;
+}
+void ghost::setYPos(float newPos)
+{
+	posY = newPos;
 }
