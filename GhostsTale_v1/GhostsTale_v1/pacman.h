@@ -18,9 +18,11 @@ private:
 
 	Map* level;
 
+	float moveSpeed = 0.03;
+
 public:
 
-	Pacman(Map* m, float startX, float startY);
+	Pacman(Map* m, float startX, float startY, float ms);
 	~Pacman();
 
 	void move(float playerPosX, float playerPosY, float buffer);

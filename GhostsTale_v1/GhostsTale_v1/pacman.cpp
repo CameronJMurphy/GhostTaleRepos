@@ -1,6 +1,6 @@
 #include "pacman.h"
 
-Pacman::Pacman(Map* m, float startX, float startY) : level(m), startPosX(startX), startPosY(startY), currentPosX(startX), currentPosY(startY)
+Pacman::Pacman(Map* m, float startX, float startY, float ms) : level(m), startPosX(startX), startPosY(startY), currentPosX(startX), currentPosY(startY), moveSpeed(ms)
 {
 
 }
@@ -25,22 +25,22 @@ void Pacman::move(float playerPosX, float playerPosY, float buffer)
 	
 	if (playerPosX > currentPosX && tileToRight != 1)
 	{
-		currentPosX += .01;//slower speed than the player, move Right
+		currentPosX += moveSpeed;//move Right
 		moved = true;
 	}
 	if (playerPosY > currentPosY && tileUp != 1)
 	{
-		currentPosY += .01;//move Up
+		currentPosY += moveSpeed;//move Up
 		moved = true;
 	}
 	if (playerPosX < currentPosX && tileToLeft != 1)
 	{
-		currentPosX -= .01;//move Left
+		currentPosX -= moveSpeed;//move Left
 		moved = true;
 	}
 	if (playerPosY < currentPosY && tileDown != 1)
 	{
-		currentPosY -= .01;// move Down
+		currentPosY -= moveSpeed;// move Down
 		moved = true;
 	}
 

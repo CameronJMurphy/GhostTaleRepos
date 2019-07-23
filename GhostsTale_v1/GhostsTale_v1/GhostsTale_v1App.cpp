@@ -47,10 +47,10 @@ bool GhostsTale_v1App::startup() {
 
 	level = new Map(getWindowWidth(), getWindowHeight());
 
-	pacman1 = new Pacman(level,200,200);
-	pacman2 = new Pacman(level, 600,600);
-	pacman3 = new Pacman(level, 600, 200);
-	pacman4 = new Pacman(level, 200, 600);
+	pacman1 = new Pacman(level,200,200, 0.03);
+	pacman2 = new Pacman(level, 600,600,0.02);
+	pacman3 = new Pacman(level, 600, 200,0.04);
+	pacman4 = new Pacman(level, 200, 600,0.035);
 	
 
 	// TODO: remember to change this when redistributing a build!
