@@ -163,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="entity.cpp" />
     <ClCompile Include="Ghost.cpp" />
     <ClCompile Include="GhostsTale_v1App.cpp" />
     <ClCompile Include="main.cpp" />
@@ -171,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="entity.h" />
     <ClInclude Include="Ghost.h" />
     <ClInclude Include="GhostsTale_v1App.h" />
     <ClInclude Include="Map.h" />

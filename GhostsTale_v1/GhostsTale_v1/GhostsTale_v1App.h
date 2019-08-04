@@ -66,6 +66,21 @@ protected:
 
 	int HalfOfWindowWidth = getWindowWidth() / 2;
 	int HalfOfWindowHeight = getWindowHeight() / 2;
+
+	const int mapLength = 21;
+	const int mapHeight = 21;
+
+	float tileSize;
+	
+	
+	
+	/*struct tilesSurrounding
+	{
+		int left;
+		int right;
+		int down;
+		int up;
+	};*/
 	
 
 };

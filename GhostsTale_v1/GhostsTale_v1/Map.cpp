@@ -48,7 +48,8 @@ void Map::print(aie::Renderer2D* r, aie::Texture* wall,	float blockSizeX, float 
 			}
 			else if (level[row][col] == ghostDrop)
 			{
-				r->drawSprite(drop, imagePosX, imagePosY, blockSizeX, blockSizeY);//print ghost drops
+				//r->drawSprite(drop, imagePosX, imagePosY, blockSizeX, blockSizeY);//print ghost drops
+				r->drawBox(imagePosX, imagePosY, blockSizeX -30, blockSizeY -30);
 			}
 			imagePosX += blockSizeX;
 		}

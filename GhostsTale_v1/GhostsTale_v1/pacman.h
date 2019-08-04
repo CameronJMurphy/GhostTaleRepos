@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Map.h"
+#include "entity.h"
 
-class Pacman
+class Pacman : public entity
 {
 private:
 	float startPosX = 200;

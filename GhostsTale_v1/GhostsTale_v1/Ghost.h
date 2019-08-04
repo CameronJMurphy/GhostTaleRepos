@@ -1,35 +1,46 @@
 #pragma once
+//#include "Map.h"
+#include "entity.h"
 
 
 //this class represents the player
-class ghost
+class ghost : public entity
 {
 protected:
-	float startX = 300;
-	float startY = 325;
-	float posX = 300;//ghost current positionX
-	float posY = 325; //ghost current positionY
+	float startX =34 * 10.5;//34 is the tile size
+	float startY =34 * 9.5;//34 is the tile size
+	float posX = startX;//ghost current positionX
+	float posY = startY; //ghost current positionY
 	int ghostDrops = 0; //counter to see how many ghost drops have been collected
+	int mapLength = 21;
+	bool collided = false;
 
-	//we need to know what tile surround the player so we can determine movement options
-	int tileToRight;
-	int tileToLeft;
-	int tileDown;
-	int tileUp;
+	/*struct tilesSurrounding
+	{
+		int left;
+		int right;
+		int down;
+		int up;
+	};*/
+
+
+	
 public:
+
+	
 
 	ghost();
 
 	~ghost();
 
-	void moveRight();
-	void moveLeft();
-	void moveDown();
-	void moveUp();
+	void moveRight(int yPos, float tileSize);
+	void moveLeft(int yPos, float tileSize);
+	void moveDown(int xPos, float tileSize);
+	void moveUp(int xPos, float tileSize);
 
-	float xPos();
+	float xPos() const;
 
-	float yPos();
+	float yPos() const;
 
 	void setXPos(float pos);
 	void setYPos(float pos);
@@ -41,6 +52,10 @@ public:
 	void collectDrop();
 
 	int currentDrops();
+
+	void clamp(int collision, int xPos, int yPos, float tileSize);
+
+	//tilesSurrounding centreImage(Map* level, ghost* player, int buffer);
 	
-	
+	bool Collided();
 };
