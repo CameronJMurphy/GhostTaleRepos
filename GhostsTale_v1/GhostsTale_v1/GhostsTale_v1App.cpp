@@ -167,8 +167,8 @@ void GhostsTale_v1App::update(float deltaTime) {
 
 		//figure out what surrounding tiles of the player are, from the centre on the image
 		int tileToRight = level->getTile(player->xPos() + buffer, player->yPos());
-		int tileToLeft = level->getTile(player->xPos() - buffer, player->yPos());
-		int tileDown = level->getTile(player->xPos(), player->yPos() - buffer);
+		int tileToLeft = level->getTile(player->xPos() - buffer + 3, player->yPos());
+		int tileDown = level->getTile(player->xPos(), player->yPos() - buffer + 3);
 		int tileUp = level->getTile(player->xPos(), player->yPos() + buffer);
 
 		//figure out what tiles suround the top side of the image
@@ -350,6 +350,10 @@ void GhostsTale_v1App::update(float deltaTime) {
 		for (int i = 0; i < collisionPoints; i++)
 		{
 			player->clamp(collisions[i], level->levelXpos(player->xPos()), level->levelXpos(player->yPos()), tileSize);
+			if (player->Collided() == true)
+			{
+				i = collisionPoints;
+			}
 		}
 		if (player->Collided() == true)
 		{
