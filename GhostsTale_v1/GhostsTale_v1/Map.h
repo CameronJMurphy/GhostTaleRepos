@@ -10,7 +10,7 @@ class Map
 private:
 	const int MapLength = 21;
 	const int MapWidth = 21;
-
+	
 	float windowX, windowY;
 
 	int level[21][21]

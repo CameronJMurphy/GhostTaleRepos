@@ -12,8 +12,8 @@ protected:
 	float posX = startX;//ghost current positionX
 	float posY = startY; //ghost current positionY
 	int ghostDrops = 0; //counter to see how many ghost drops have been collected
-	int mapLength = 21;
-	bool collided = false;
+	int mapLength = 21; //this is applicable to height and width
+	bool collided = false; //we need to know if the player has collided with anything
 
 	/*struct tilesSurrounding
 	{
@@ -58,4 +58,6 @@ public:
 	//tilesSurrounding centreImage(Map* level, ghost* player, int buffer);
 	
 	bool Collided();
+
+
 };

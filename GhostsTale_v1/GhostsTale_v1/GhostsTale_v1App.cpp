@@ -302,8 +302,7 @@ void GhostsTale_v1App::update(float deltaTime) {
 				}
 				if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
 				{
-					level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
-				}
+					level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);				}
 				}
 				break;
 			case(aie::INPUT_KEY_LEFT):
@@ -347,6 +346,7 @@ void GhostsTale_v1App::update(float deltaTime) {
 
 			}
 		}
+		
 		for (int i = 0; i < collisionPoints; i++)
 		{
 			player->clamp(collisions[i], level->levelXpos(player->xPos()), level->levelXpos(player->yPos()), tileSize);
@@ -359,6 +359,7 @@ void GhostsTale_v1App::update(float deltaTime) {
 		{
 			lastButtonPress = 0;
 		}
+		
 	}
 
 
@@ -439,7 +440,7 @@ void GhostsTale_v1App::draw() {
 		break;
 
 	case Win:
-		m_2dRenderer->drawText(m_font, "You Win", getWindowWidth() / 2, getWindowHeight() / 2);
+		m_2dRenderer->drawText(m_font, "You Win", getWindowWidth() / 2.5, getWindowHeight() / 2);
 		break;
 	}
 

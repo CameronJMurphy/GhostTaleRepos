@@ -96,12 +96,12 @@ void Map::teleportPlayer(ghost* player, std::string direction,float windowWidth,
 	if (direction == "right")
 	{
 		player->setXPos(0);
-		player->setYPos(windowHeight/2 + tileSize);// we add tile size because the map is off centre
+		player->setYPos(tileSize* 11.5);// we add tile size because the map is off centre
 	}
 	else
 	{
-		player->setXPos(tileSize * 21);//this is the length of the map
-		player->setYPos(windowHeight / 2 + tileSize);
+		player->setXPos(tileSize * 20.5);//this is the length of the map
+		player->setYPos(tileSize* 11.5);
 	}
 }
 

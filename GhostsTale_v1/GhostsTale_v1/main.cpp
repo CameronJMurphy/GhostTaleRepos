@@ -2,8 +2,8 @@
 
 int main() {
 	
-	int screenX = 1280;
-	int screenY = 720;
+	int screenX = 21 * 34;
+	int screenY = 21 * 34;
 
 	// allocation
 	auto app = new GhostsTale_v1App();
