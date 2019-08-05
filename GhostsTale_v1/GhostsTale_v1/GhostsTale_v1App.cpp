@@ -232,118 +232,124 @@ void GhostsTale_v1App::update(float deltaTime) {
 		pacman4->move(player->xPos(), player->yPos(), buffer);
 
 		//find out player co ords in relation to the map class
-		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth && tileToRight != 1
-			&& tileToTopRight != 1 && tileToBotRight != 1) // if they input right, it cannot move offscreen & cant move into a Wall-tile square
+		if (player->Collided() == false)
 		{
-			player->moveRight(player->yPos(), tileSize);
-			lastButtonPress = aie::INPUT_KEY_RIGHT;
-			if (tileToRight == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+			if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth && tileToRight != 1
+				&& tileToTopRight != 1 && tileToBotRight != 1) // if they input right, it cannot move offscreen & cant move into a Wall-tile square
 			{
-				player->collectDrop();
-				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-				if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
-				{
-					level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21 );
-				}
-			}
-		}
-		else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && player->xPos() > 0 && tileToLeft != 1 &&
-			tileToTopLeft != 1 && tileToBotLeft != 1)
-		{
-			player->moveLeft(player->yPos(), tileSize);
-			lastButtonPress = aie::INPUT_KEY_LEFT;
-			if (tileToLeft == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-			{
-				player->collectDrop();
-				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+				player->moveRight(player->yPos(), tileSize);
+				lastButtonPress = aie::INPUT_KEY_RIGHT;
 				
-			}
-			if (level->levelXpos(player->xPos()) == 0 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
-			{
-				level->teleportPlayer(player, "left", getWindowWidth(), getWindowHeight(),getWindowHeight() / 21);
-			}
-		}
-		else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && player->yPos() > 0 && tileDown != 1
-			&& tileLeftDown != 1 && tileRightDown != 1)
-		{
-			player->moveDown(player->xPos(), tileSize);
-			lastButtonPress = aie::INPUT_KEY_DOWN;
-			if (tileDown == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-			{
-				player->collectDrop();
-				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-			}
-		}
-		else if (input->isKeyDown(aie::INPUT_KEY_UP) && player->yPos() < windowHeight && tileUp != 1 &&
-			tileLeftUp != 1 && tileRightUp != 1)
-		{
-			player->moveUp(player->xPos(), tileSize);
-			lastButtonPress = aie::INPUT_KEY_UP;
-			if (tileUp == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-			{
-				player->collectDrop();
-				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-			}
-		}
-
-		else if (player->Collided() == false)// this just continues the players movement even if they're not holding a key. It will continue their last button press
-		{
-			switch(lastButtonPress)
-			{
-			case(aie::INPUT_KEY_RIGHT):
-				{
-				if(player->xPos() < windowWidth && tileToRight != 1)
-					player->moveRight(player->yPos(), tileSize);
 				if (tileToRight == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 				{
 					player->collectDrop();
 					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-					
+					if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
+					{
+						level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
+					}
 				}
-				if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
-				{
-					level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);				}
-				}
-				break;
-			case(aie::INPUT_KEY_LEFT):
+			}
+			else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && player->xPos() > 0 && tileToLeft != 1 &&
+				tileToTopLeft != 1 && tileToBotLeft != 1)
 			{
-				if(player->xPos() > 0 && tileToLeft != 1)
-					player->moveLeft(player->yPos(), tileSize);
+				player->moveLeft(player->yPos(), tileSize);
+				lastButtonPress = aie::INPUT_KEY_LEFT;
+				
 				if (tileToLeft == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 				{
 					player->collectDrop();
 					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-					
+
 				}
 				if (level->levelXpos(player->xPos()) == 0 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
 				{
-					level->teleportPlayer(player, "left", getWindowWidth(), getWindowHeight(),getWindowHeight() / 21);
+					level->teleportPlayer(player, "left", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
 				}
 			}
-			break;
-			case(aie::INPUT_KEY_DOWN):
+			else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && player->yPos() > 0 && tileDown != 1
+				&& tileLeftDown != 1 && tileRightDown != 1)
 			{
-				if(player->yPos() > 0 && tileDown != 1)
-					player->moveDown(player->xPos(), tileSize);
+				player->moveDown(player->xPos(), tileSize);
+				lastButtonPress = aie::INPUT_KEY_DOWN;
 				if (tileDown == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 				{
 					player->collectDrop();
 					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 				}
 			}
-			break;
-			case(aie::INPUT_KEY_UP):
+			else if (input->isKeyDown(aie::INPUT_KEY_UP) && player->yPos() < windowHeight && tileUp != 1 &&
+				tileLeftUp != 1 && tileRightUp != 1)
 			{
-				if(player->yPos() < windowHeight && tileUp != 1)
-					player->moveUp(player->xPos(), tileSize);
+				player->moveUp(player->xPos(), tileSize);
+				lastButtonPress = aie::INPUT_KEY_UP;
 				if (tileUp == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 				{
 					player->collectDrop();
 					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 				}
 			}
-			break;
 
+			else// this just continues the players movement even if they're not holding a key. It will continue their last button press
+			{
+				switch (lastButtonPress)
+				{
+				case(aie::INPUT_KEY_RIGHT):
+				{
+					if (player->xPos() < windowWidth && tileToRight != 1)
+						player->moveRight(player->yPos(), tileSize);
+					if (tileToRight == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+					{
+						player->collectDrop();
+						level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+
+					}
+					if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
+					{
+						level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
+					}
+				}
+				break;
+				case(aie::INPUT_KEY_LEFT):
+				{
+					if (player->xPos() > 0 && tileToLeft != 1)
+						player->moveLeft(player->yPos(), tileSize);
+					if (tileToLeft == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+					{
+						player->collectDrop();
+						level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+
+					}
+					if (level->levelXpos(player->xPos()) == 0 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
+					{
+						level->teleportPlayer(player, "left", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
+					}
+				}
+				break;
+				case(aie::INPUT_KEY_DOWN):
+				{
+					if (player->yPos() > 0 && tileDown != 1)
+						player->moveDown(player->xPos(), tileSize);
+					if (tileDown == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+					{
+						player->collectDrop();
+						level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+					}
+				}
+				break;
+				case(aie::INPUT_KEY_UP):
+				{
+					if (player->yPos() < windowHeight && tileUp != 1)
+						player->moveUp(player->xPos(), tileSize);
+					if (tileUp == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+					{
+						player->collectDrop();
+						level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+					}
+				}
+				break;
+
+				}
 			}
 		}
 		
