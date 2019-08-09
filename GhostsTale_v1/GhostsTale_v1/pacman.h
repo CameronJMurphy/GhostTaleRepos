@@ -26,11 +26,13 @@ public:
 	Pacman(Map* m, float startX, float startY, float ms);
 	~Pacman();
 
-	void move(float playerPosX, float playerPosY, float buffer);
+	void move(float playerPosX, float playerPosY, float buffer, float deltaTime);
 	
 	float currentX();
 	float currentY();
 
 	void reset();
+
+	bool isColliding(ghost* player);
 	
 };

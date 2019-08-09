@@ -3,14 +3,6 @@
 
 
 
-//struct tilesSurrounding
-//{
-//	int left;
-//	int right;
-//	int down;
-//	int up;
-//};
-
 ghost::ghost()
 {
 	
@@ -31,61 +23,25 @@ float ghost::yPos() const
 	return posY;
 }
 
-void ghost::moveRight(int yPos, float tileSize)
+void ghost::moveRight(float tileSize, float deltaTime)
 {
-	posX += .1;
-	//for (int col = 0; col < mapLength; col++)
-	//{
-	//		
-	//	if (yPos == col)
-	//	{
-	//		posY = tileSize * (col + 0.5);
-
-	//	}
-
-	//}
+	posX += speed * deltaTime;
+	
 }
-void ghost::moveLeft(int yPos, float tileSize)
+void ghost::moveLeft(float tileSize, float deltaTime)
 {
-	posX -= .1;
-	/*for (int col = 0; col < mapLength; col++)
-	{
-
-		if (yPos == col)
-		{
-			posY = tileSize * (col + 0.5);
-
-		}
-
-	}*/
+	posX -= speed * deltaTime;
+	
 }
-void ghost::moveDown(int xPos, float tileSize)
+void ghost::moveDown(float tileSize, float deltaTime)
 {
-	posY -= .1;
-	/*for (int row = 0; row < mapLength; row++)
-	{
-
-		if (xPos == row)
-		{
-			posX = tileSize * (row + 0.5);
-
-		}
-
-	}*/
+	posY -= speed * deltaTime;
+	
 }
-void ghost::moveUp(int xPos, float tileSize)
+void ghost::moveUp(float tileSize, float deltaTime)
 {
-	posY += .1;
-	/*for (int row = 0; row < mapLength; row++)
-	{
-
-		if (xPos == row)
-		{
-			posX = tileSize * (row + 0.5);
-
-		}
-
-	}*/
+	posY += speed * deltaTime;
+	
 }
 
 void ghost::reset()
@@ -127,7 +83,7 @@ void ghost::clamp(int collision,int xPos, int yPos, float tileSize)
 				{
 					posY = tileSize * (col + 0.5);
 					posX = tileSize * (row + 0.5);
-
+					break;
 				}
 			}
 		}
@@ -143,14 +99,3 @@ bool ghost::Collided()
 	return collided;
 }
 
-//tilesSurrounding ghost::centreImage(Map* level, ghost* player, int buffer)
-//{
-//	tilesSurrounding centre;
-//
-//	centre.right = level->getTile(player->xPos() + buffer, player->yPos());
-//	centre.left = level->getTile(player->xPos() - buffer, player->yPos());
-//	centre.down = level->getTile(player->xPos(), player->yPos() - buffer);
-//	centre.up = level->getTile(player->xPos(), player->yPos() + buffer);
-//
-//
-//}

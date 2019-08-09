@@ -20,6 +20,9 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
+	void collisionPredators(float deltaTime);//collision when the pacman are predators
+	//void collisionPrey(); // collision when the pacman are prey
+
 	
 
 
@@ -39,11 +42,9 @@ protected:
 	
 	ghost* player;
 	Map* level;
-	Pacman* pacman1;
-	Pacman* pacman2;
-	Pacman* pacman3;
-	Pacman* pacman4;
-
+	
+	Pacman* pacman[4];
+	const int enemyCount = 4;
 	int lastButtonPress;
 	
 	

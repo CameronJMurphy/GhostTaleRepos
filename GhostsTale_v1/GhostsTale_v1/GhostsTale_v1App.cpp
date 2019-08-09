@@ -33,29 +33,29 @@ bool GhostsTale_v1App::startup() {
 	
 	m_2dRenderer = new aie::Renderer2D();
 	//setup textures
-	wallTile = new aie::Texture("./textures/grass.png");
-	pacmanTexture = new aie::Texture("./textures/pacman.png");
-	ghostTexture = new aie::Texture("./textures/ghost.png");
-	ghostDrop = new aie::Texture("./textures/ghostDrop.svg.png");
-	title = new aie::Texture("./textures/Title.png");
-	settingsButtonTexture = new aie::Texture("./textures/SettingsButton.png");
-	startButtonTexture = new aie::Texture("./textures/StartButton.png");
-	upArrow = new aie::Texture("./textures/UpArrow.png");
-	downArrow = new aie::Texture("./textures/DownArrow.png");
+	wallTile = new aie::Texture("./bin/textures/grass.png");
+	pacmanTexture = new aie::Texture("./bin/textures/pacman.png");
+	ghostTexture = new aie::Texture("./bin/textures/ghost.png");
+	ghostDrop = new aie::Texture("./bin/textures/ghostDrop.svg.png");
+	title = new aie::Texture("./bin/textures/Title.png");
+	settingsButtonTexture = new aie::Texture("./bin/textures/SettingsButton.png");
+	startButtonTexture = new aie::Texture("./bin/textures/StartButton.png");
+	upArrow = new aie::Texture("./bin/textures/UpArrow.png");
+	downArrow = new aie::Texture("./bin/textures/DownArrow.png");
 
 	player = new ghost();
 
 	level = new Map(getWindowWidth(), getWindowHeight());
 
-	pacman1 = new Pacman(level,200,200, 0.03);
-	pacman2 = new Pacman(level, 600,600,0.02);
-	pacman3 = new Pacman(level, 600, 200,0.04);
-	pacman4 = new Pacman(level, 200, 600,0.035);
+	pacman[0] = new Pacman(level, 200, 200, 100);
+	pacman[1] = new Pacman(level, 600, 600, 125);
+	pacman[2] = new Pacman(level, 600, 200, 80);
+	pacman[3] = new Pacman(level, 200, 600, 90);
 	
 
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
-	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
+	m_font = new aie::Font("./bin/font/consolas.ttf", 32);
 
 
 	m_timer = 0;
@@ -74,10 +74,10 @@ void GhostsTale_v1App::shutdown() {
 	delete ghostTexture;
 	delete player;
 	delete level;
-	delete pacman1;
-	delete pacman2;
-	delete pacman3;
-	delete pacman4;
+	for (int i = 0; i < enemyCount; ++i)
+	{
+		delete pacman[i];
+	}
 }
 
 void GhostsTale_v1App::update(float deltaTime) {
@@ -151,47 +151,7 @@ void GhostsTale_v1App::update(float deltaTime) {
 	else if (state == Game)
 	{
 		
-		tileSize = getWindowHeight() / 21;
-		int currentPos = level->getTile(player->xPos(), player->yPos());
 		float buffer = (getWindowHeight() / 21) / 2 - 8;//half of player size
-
-		
-		//dream code
-		//tilesSurrounding TilesSurroundingCentre = centreImage(level, player, buffer);
-		//tilesSurrounding TilesSurroundingTop =  topSideImage(level, player, buffer);
-		//tilesSurrounding TilesSurroundingBot =  botSideImage(level, player, buffer);
-		//tilesSurrounding TilesSurroundingLeft =  leftSideImage(level, player, buffer);
-		//tilesSurrounding TilesSurroundingRight =  rightSideImage(level, player, buffer);
-
-		
-
-		//figure out what surrounding tiles of the player are, from the centre on the image
-		int tileToRight = level->getTile(player->xPos() + buffer, player->yPos());
-		int tileToLeft = level->getTile(player->xPos() - buffer + 3, player->yPos());
-		int tileDown = level->getTile(player->xPos(), player->yPos() - buffer + 3);
-		int tileUp = level->getTile(player->xPos(), player->yPos() + buffer);
-
-		//figure out what tiles suround the top side of the image
-		int tileToTopRight = level->getTile(player->xPos() + buffer, player->yPos() + buffer);
-		int tileToTopLeft = level->getTile(player->xPos() - buffer, player->yPos() + buffer);
-	
-		//figure out what tiles suround the bottom side of the image
-		int tileToBotRight = level->getTile(player->xPos() + buffer, player->yPos() - buffer);
-		int tileToBotLeft = level->getTile(player->xPos() - buffer, player->yPos() - buffer);
-		
-		//figure out what tiles suround the left side of the image
-		int tileLeftDown = level->getTile(player->xPos() - buffer, player->yPos() - buffer);
-		int tileLeftUp = level->getTile(player->xPos() - buffer, player->yPos() + buffer);
-		//figure out what tiles suround the right side of the image
-		int tileRightDown = level->getTile(player->xPos() + buffer, player->yPos() - buffer);
-		int tileRightUp = level->getTile(player->xPos() + buffer, player->yPos() + buffer);
-
-		
-		const int collisionPoints = 12;
-		int collisions[collisionPoints]{ tileToRight ,tileToLeft ,tileDown ,tileUp ,tileToTopRight,tileToTopLeft,tileToBotRight,tileToBotLeft,tileLeftDown,tileLeftUp,tileRightDown,tileRightUp };
-		
-
-		
 
 
 		//if the players collect all the orbs, they win
@@ -203,168 +163,33 @@ void GhostsTale_v1App::update(float deltaTime) {
 
 
 		//if any of the pacman are touching the player, you lose the game
-		if (player->xPos() > pacman1->currentX() - 1 && player->xPos() < pacman1->currentX() + 1 &&//pacman1X
-			player->yPos() > pacman1->currentY() - 1 && player->yPos() < pacman1->currentY() + 1 ||//pacman1Y
-			player->xPos() > pacman2->currentX() - 1 && player->xPos() < pacman2->currentX() + 1 &&//pacman2X
-			player->yPos() > pacman2->currentY() - 1 && player->yPos() < pacman2->currentY() + 1 ||//pacman2Y
-			player->xPos() > pacman3->currentX() - 1 && player->xPos() < pacman3->currentX() + 1 &&//pacman3X
-			player->yPos() > pacman3->currentY() - 1 && player->yPos() < pacman3->currentY() + 1 ||//pacman3Y
-			player->xPos() > pacman4->currentX() - 1 && player->xPos() < pacman4->currentX() + 1 &&//pacman4X
-			player->yPos() > pacman4->currentY() - 1 && player->yPos() < pacman4->currentY() + 1)//pacman4Y
+
+		for (int i = 0; i < enemyCount; ++i)
 		{
+			if (pacman[i]->isColliding(player))
+			{
 			//reset game
-			pacman1->reset();
-			pacman2->reset();
-			pacman3->reset();
-			pacman4->reset();
+			for (int i = 0; i < enemyCount; ++i)
+			{
+				pacman[i]->reset();
+			}
 			player->reset();
 			level->resetLevel();//put all the ghost drops back
 			lastButtonPress = 0;
+			break;
+			}
 		}
-
-
-		
 
 		//pacman moves towards player
-		pacman1->move(player->xPos(), player->yPos(), buffer);
-		pacman2->move(player->xPos(), player->yPos(), buffer);
-		pacman3->move(player->xPos(), player->yPos(), buffer);
-		pacman4->move(player->xPos(), player->yPos(), buffer);
-
-		//find out player co ords in relation to the map class
-		if (player->Collided() == false)
+		for (int i = 0; i < enemyCount; ++i)
 		{
-			if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth && tileToRight != 1
-				&& tileToTopRight != 1 && tileToBotRight != 1) // if they input right, it cannot move offscreen & cant move into a Wall-tile square
-			{
-				player->moveRight(player->yPos(), tileSize);
-				lastButtonPress = aie::INPUT_KEY_RIGHT;
-				
-				if (tileToRight == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-				{
-					player->collectDrop();
-					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-					if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
-					{
-						level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
-					}
-				}
-			}
-			else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && player->xPos() > 0 && tileToLeft != 1 &&
-				tileToTopLeft != 1 && tileToBotLeft != 1)
-			{
-				player->moveLeft(player->yPos(), tileSize);
-				lastButtonPress = aie::INPUT_KEY_LEFT;
-				
-				if (tileToLeft == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-				{
-					player->collectDrop();
-					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-
-				}
-				if (level->levelXpos(player->xPos()) == 0 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
-				{
-					level->teleportPlayer(player, "left", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
-				}
-			}
-			else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && player->yPos() > 0 && tileDown != 1
-				&& tileLeftDown != 1 && tileRightDown != 1)
-			{
-				player->moveDown(player->xPos(), tileSize);
-				lastButtonPress = aie::INPUT_KEY_DOWN;
-				if (tileDown == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-				{
-					player->collectDrop();
-					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-				}
-			}
-			else if (input->isKeyDown(aie::INPUT_KEY_UP) && player->yPos() < windowHeight && tileUp != 1 &&
-				tileLeftUp != 1 && tileRightUp != 1)
-			{
-				player->moveUp(player->xPos(), tileSize);
-				lastButtonPress = aie::INPUT_KEY_UP;
-				if (tileUp == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-				{
-					player->collectDrop();
-					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-				}
-			}
-
-			else// this just continues the players movement even if they're not holding a key. It will continue their last button press
-			{
-				switch (lastButtonPress)
-				{
-				case(aie::INPUT_KEY_RIGHT):
-				{
-					if (player->xPos() < windowWidth && tileToRight != 1)
-						player->moveRight(player->yPos(), tileSize);
-					if (tileToRight == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-					{
-						player->collectDrop();
-						level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-
-					}
-					if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
-					{
-						level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
-					}
-				}
-				break;
-				case(aie::INPUT_KEY_LEFT):
-				{
-					if (player->xPos() > 0 && tileToLeft != 1)
-						player->moveLeft(player->yPos(), tileSize);
-					if (tileToLeft == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-					{
-						player->collectDrop();
-						level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-
-					}
-					if (level->levelXpos(player->xPos()) == 0 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
-					{
-						level->teleportPlayer(player, "left", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
-					}
-				}
-				break;
-				case(aie::INPUT_KEY_DOWN):
-				{
-					if (player->yPos() > 0 && tileDown != 1)
-						player->moveDown(player->xPos(), tileSize);
-					if (tileDown == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-					{
-						player->collectDrop();
-						level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-					}
-				}
-				break;
-				case(aie::INPUT_KEY_UP):
-				{
-					if (player->yPos() < windowHeight && tileUp != 1)
-						player->moveUp(player->xPos(), tileSize);
-					if (tileUp == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
-					{
-						player->collectDrop();
-						level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
-					}
-				}
-				break;
-
-				}
-			}
+			pacman[i]->move(player->xPos(), player->yPos(), buffer, deltaTime);
 		}
-		
-		for (int i = 0; i < collisionPoints; i++)
-		{
-			player->clamp(collisions[i], level->levelXpos(player->xPos()), level->levelXpos(player->yPos()), tileSize);
-			if (player->Collided() == true)
-			{
-				i = collisionPoints;
-			}
-		}
-		if (player->Collided() == true)
-		{
-			lastButtonPress = 0;
-		}
+
+		//collision when pacman are predators
+		collisionPredators(deltaTime);
+		//collision when pacman are prey
+
 		
 	}
 
@@ -436,13 +261,10 @@ void GhostsTale_v1App::draw() {
 		level->print(m_2dRenderer, wallTile, tileSize, tileSize, ghostDrop);
 		
 		m_2dRenderer->drawSprite(ghostTexture, player->xPos(), player->yPos(), tileSize, tileSize);//print ghost
-		//m_2dRenderer->drawBox(player->xPos(), player->yPos(), tileSize, tileSize);
-		m_2dRenderer->drawSprite(pacmanTexture, pacman1->currentX(), pacman1->currentY(), tileSize, tileSize);//print pacman1
-		m_2dRenderer->drawSprite(pacmanTexture, pacman2->currentX(), pacman2->currentY(), tileSize, tileSize);//print pacman2
-		m_2dRenderer->drawSprite(pacmanTexture, pacman3->currentX(), pacman3->currentY(), tileSize, tileSize);//print pacman3
-		m_2dRenderer->drawSprite(pacmanTexture, pacman4->currentX(), pacman4->currentY(), tileSize, tileSize);//print pacman1
-		
-		
+		for (int i =0; i < enemyCount; ++i)
+		{
+			m_2dRenderer->drawSprite(pacmanTexture, pacman[i]->currentX(), pacman[i]->currentY(), tileSize, tileSize);//print pacman
+		}
 		break;
 
 	case Win:
@@ -460,4 +282,177 @@ void GhostsTale_v1App::draw() {
 
 	// done drawing sprites
 	m_2dRenderer->end();
+}
+
+
+void GhostsTale_v1App::collisionPredators(float deltaTime)
+{
+	aie::Input* input = aie::Input::getInstance();
+
+	const unsigned int windowHeight = getWindowHeight();
+	const unsigned int windowWidth = getWindowWidth();
+
+	tileSize = getWindowHeight() / 21;
+	int currentPos = level->getTile(player->xPos(), player->yPos());
+	float buffer = (getWindowHeight() / 21) / 2 - .0001;//half of player size
+
+
+	//figure out what surrounding tiles of the player are, from the centre on the image
+	int tileToRight = level->getTile(player->xPos() + buffer, player->yPos());
+	int tileToLeft = level->getTile(player->xPos() - buffer, player->yPos());
+	int tileDown = level->getTile(player->xPos(), player->yPos() - buffer);
+	int tileUp = level->getTile(player->xPos(), player->yPos() + buffer);
+
+	//figure out what tiles suround the top side of the image
+	int tileToTopRight = level->getTile(player->xPos() + buffer, player->yPos() + buffer);
+	int tileToTopLeft = level->getTile(player->xPos() - buffer, player->yPos() + buffer);
+
+	//figure out what tiles suround the bottom side of the image
+	int tileToBotRight = level->getTile(player->xPos() + buffer, player->yPos() - buffer);
+	int tileToBotLeft = level->getTile(player->xPos() - buffer, player->yPos() - buffer);
+
+	//figure out what tiles suround the left side of the image
+	int tileLeftDown = level->getTile(player->xPos() - buffer, player->yPos() - buffer);
+	int tileLeftUp = level->getTile(player->xPos() - buffer, player->yPos() + buffer);
+	//figure out what tiles suround the right side of the image
+	int tileRightDown = level->getTile(player->xPos() + buffer, player->yPos() - buffer);
+	int tileRightUp = level->getTile(player->xPos() + buffer, player->yPos() + buffer);
+
+	const int collisionPoints = 8;
+	int collisions[collisionPoints]{tileToTopRight,tileToTopLeft,tileToBotRight,tileToBotLeft,tileLeftDown,tileLeftUp,tileRightDown,tileRightUp };
+
+
+
+	if (player->Collided() == false)
+	{
+		if (input->isKeyDown(aie::INPUT_KEY_RIGHT) && player->xPos() < windowWidth//tileToRight != 1
+			&& tileToTopRight != 1 && tileToBotRight != 1) // if they input right, it cannot move offscreen & cant move into a Wall-tile square
+		{
+			player->moveRight(tileSize, deltaTime);
+			lastButtonPress = aie::INPUT_KEY_RIGHT;
+
+			if (tileToRight == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+			{
+				player->collectDrop();
+				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+				if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
+				{
+					level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
+				}
+			}
+		}
+		else if (input->isKeyDown(aie::INPUT_KEY_LEFT) && player->xPos() > 0 //tileToLeft != 1 
+			&& tileToTopLeft != 1 && tileToBotLeft != 1)
+		{
+			player->moveLeft(tileSize, deltaTime);
+			lastButtonPress = aie::INPUT_KEY_LEFT;
+
+			if (tileToLeft == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+			{
+				player->collectDrop();
+				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+
+			}
+			if (level->levelXpos(player->xPos()) == 0 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
+			{
+				level->teleportPlayer(player, "left", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
+			}
+		}
+		else if (input->isKeyDown(aie::INPUT_KEY_DOWN) && player->yPos() > 0//tileDown != 1
+			&& tileLeftDown != 1 && tileRightDown != 1)
+		{
+			player->moveDown(tileSize, deltaTime);
+			lastButtonPress = aie::INPUT_KEY_DOWN;
+			if (tileDown == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+			{
+				player->collectDrop();
+				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+			}
+		}
+		else if (input->isKeyDown(aie::INPUT_KEY_UP) && player->yPos() < windowHeight //tileUp != 1 
+			&& tileLeftUp != 1 && tileRightUp != 1)
+		{
+			player->moveUp(tileSize, deltaTime);
+			lastButtonPress = aie::INPUT_KEY_UP;
+			if (tileUp == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+			{
+				player->collectDrop();
+				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+			}
+		}
+
+		else// this just continues the players movement even if they're not holding a key. It will continue their last button press
+		{
+			switch (lastButtonPress)
+			{
+			case(aie::INPUT_KEY_RIGHT):
+			{
+				if (player->xPos() < windowWidth && tileToTopRight != 1 && tileToBotRight != 1)
+					player->moveRight(tileSize, deltaTime);
+				if (tileToRight == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+				{
+					player->collectDrop();
+					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+
+				}
+				if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
+				{
+					level->teleportPlayer(player, "right", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
+				}
+			}
+			break;
+			case(aie::INPUT_KEY_LEFT):
+			{
+				if (player->xPos() > 0 && tileToTopLeft != 1 && tileToBotLeft != 1)
+					player->moveLeft(tileSize, deltaTime);
+				if (tileToLeft == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+				{
+					player->collectDrop();
+					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+
+				}
+				if (level->levelXpos(player->xPos()) == 0 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
+				{
+					level->teleportPlayer(player, "left", getWindowWidth(), getWindowHeight(), getWindowHeight() / 21);
+				}
+			}
+			break;
+			case(aie::INPUT_KEY_DOWN):
+			{
+				if (player->yPos() > 0 && tileLeftDown != 1 && tileRightDown != 1)
+					player->moveDown(tileSize, deltaTime);
+				if (tileDown == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+				{
+					player->collectDrop();
+					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+				}
+			}
+			break;
+			case(aie::INPUT_KEY_UP):
+			{
+				if (player->yPos() < windowHeight && tileLeftUp != 1 && tileRightUp != 1)
+					player->moveUp(tileSize, deltaTime);
+				if (tileUp == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
+				{
+					player->collectDrop();
+					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
+				}
+			}
+			break;
+
+			}
+		}
+	}
+	for (int i = 0; i < collisionPoints; i++)
+	{
+		player->clamp(collisions[i], level->levelXpos(player->xPos()), level->levelXpos(player->yPos()), tileSize);
+		if (player->Collided() == true)
+		{
+			break;
+		}
+	}
+	if (player->Collided() == true)
+	{
+		lastButtonPress = 0;
+	}
 }

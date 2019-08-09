@@ -15,14 +15,7 @@ protected:
 	int mapLength = 21; //this is applicable to height and width
 	bool collided = false; //we need to know if the player has collided with anything
 
-	/*struct tilesSurrounding
-	{
-		int left;
-		int right;
-		int down;
-		int up;
-	};*/
-
+	float speed = 450;
 
 	
 public:
@@ -33,10 +26,10 @@ public:
 
 	~ghost();
 
-	void moveRight(int yPos, float tileSize);
-	void moveLeft(int yPos, float tileSize);
-	void moveDown(int xPos, float tileSize);
-	void moveUp(int xPos, float tileSize);
+	void moveRight(float tileSize, float deltaTime);
+	void moveLeft(float tileSize, float deltaTime);
+	void moveDown(float tileSize, float deltaTime);
+	void moveUp(float tileSize, float deltaTime);
 
 	float xPos() const;
 
