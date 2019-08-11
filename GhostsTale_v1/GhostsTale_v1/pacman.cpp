@@ -62,6 +62,8 @@ void Pacman::reset()
 {
 	currentPosX = startPosX;
 	currentPosY = startPosY;
+	respawnTimer = -1;
+	preyCurrentTime = 0;
 }
 
 bool Pacman::isColliding(ghost* player)
@@ -73,4 +75,59 @@ bool Pacman::isColliding(ghost* player)
 	}
 	else
 		return false;
+}
+
+bool Pacman::isPredator()
+{
+	return predator;
+}
+
+void Pacman::die()
+{
+	respawnTimer = 0;
+	currentPosX = 100000;//storing the pacman off screen
+	currentPosY = 100000;//storing the pacman off screen
+}
+
+bool Pacman::respawnCheck()
+{
+
+	if (respawnTimer == respawnTime)
+	{
+		return true;
+	}
+	if (respawnTimer > -1 && respawnTimer < respawnTime)
+	{
+		respawnTimer++;
+		return false;
+	}
+}
+
+void Pacman::resetRespawnTimer()
+{
+	respawnTimer == -1;
+}
+
+void Pacman::turnToPrey()
+{
+	predator = false;
+}
+
+void Pacman::turnToPredator()
+{
+	predator = true;
+}
+
+bool Pacman::preyTimer()
+{
+	if (preyCurrentTime == preyStateLength)
+	{
+		preyCurrentTime = 0;
+		return true;
+	}
+	else if (preyCurrentTime <= preyStateLength)
+	{
+		++preyCurrentTime;
+		return false;
+	}
 }

@@ -20,8 +20,8 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
-	void collisionPredators(float deltaTime);//collision when the pacman are predators
-	//void collisionPrey(); // collision when the pacman are prey
+	void playerMovement(float deltaTime);//playerMovement
+	
 
 	
 
@@ -39,6 +39,7 @@ protected:
 	aie::Texture*		startButtonTexture;
 	aie::Texture*		upArrow;
 	aie::Texture*		downArrow;
+	aie::Texture*		pacmanPreyVersion;
 	
 	ghost* player;
 	Map* level;
@@ -47,7 +48,7 @@ protected:
 	const int enemyCount = 4;
 	int lastButtonPress;
 	
-	
+	Pacman* deadPacman[4];
 
 	int state = 0;
 
@@ -73,6 +74,7 @@ protected:
 	const int mapHeight = 21;
 
 	float tileSize;
+
 	
 	
 	

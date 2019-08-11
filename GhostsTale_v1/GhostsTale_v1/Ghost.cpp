@@ -48,6 +48,7 @@ void ghost::reset()
 {
 	posX = startX;
 	posY = startY;
+	ghostDrops = 0;
 }
 
 void ghost::collectDrop()
@@ -99,3 +100,7 @@ bool ghost::Collided()
 	return collided;
 }
 
+void ghost::editDropCount(int num)
+{
+	ghostDrops = num;
+}

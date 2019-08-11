@@ -17,6 +17,8 @@ protected:
 
 	float speed = 450;
 
+	//int ghostDropsCollected = 0;
+
 	
 public:
 
@@ -47,10 +49,9 @@ public:
 	int currentDrops();
 
 	void clamp(int collision, int xPos, int yPos, float tileSize);
-
-	//tilesSurrounding centreImage(Map* level, ghost* player, int buffer);
 	
 	bool Collided();
 
+	void editDropCount(int num);
 
 };

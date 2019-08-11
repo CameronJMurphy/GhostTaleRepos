@@ -21,6 +21,14 @@ private:
 
 	float moveSpeed = 0.03;
 
+	bool predator = true;
+
+	int preyCurrentTime = 0;
+	int preyStateLength = 10000;
+
+	int respawnTimer = -1;
+	int respawnTime = 4000;
+
 public:
 
 	Pacman(Map* m, float startX, float startY, float ms);
@@ -34,5 +42,18 @@ public:
 	void reset();
 
 	bool isColliding(ghost* player);
+
+	bool isPredator();
+
+	void turnToPrey();
+	void turnToPredator();
 	
+	void die();
+
+	bool respawnCheck();
+
+	void resetRespawnTimer();
+
+	bool preyTimer();
+
 };
