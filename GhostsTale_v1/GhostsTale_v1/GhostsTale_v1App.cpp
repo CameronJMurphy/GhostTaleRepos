@@ -318,6 +318,10 @@ void GhostsTale_v1App::draw() {
 			}
 
 		}
+		
+		
+
+		
 		break;
 
 	case Win:
@@ -376,7 +380,7 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 	const int collisionPoints = 8;
 	int collisions[collisionPoints]{tileToTopRight,tileToTopLeft,tileToBotRight,tileToBotLeft,tileLeftDown,tileLeftUp,tileRightDown,tileRightUp };
 
-
+	//PlaySound(L".bin\\sounds\\pacman_chomp.wav", NULL, SND_SYNC);
 
 	if (player->Collided() == false)
 	{

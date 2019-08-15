@@ -64,6 +64,8 @@ void Pacman::reset()
 	currentPosY = startPosY;
 	respawnTimer = -1;
 	preyCurrentTime = 0;
+	preyCurrentTime = 0;
+	bool predator = true;
 }
 
 bool Pacman::isColliding(ghost* player)

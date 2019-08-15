@@ -41,6 +41,7 @@ protected:
 	aie::Texture*		downArrow;
 	aie::Texture*		pacmanPreyVersion;
 	
+	
 	ghost* player;
 	Map* level;
 	
