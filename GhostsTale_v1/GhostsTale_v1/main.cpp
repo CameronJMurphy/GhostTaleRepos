@@ -1,10 +1,14 @@
 #include "GhostsTale_v1App.h"
 
+
+
+
 int main() {
 	
 	int screenX = 21 * 34;
 	int screenY = 21 * 34;
-
+	
+	
 	// allocation
 	auto app = new GhostsTale_v1App();
 

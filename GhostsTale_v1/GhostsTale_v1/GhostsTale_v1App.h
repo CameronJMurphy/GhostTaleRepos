@@ -6,6 +6,7 @@
 #include "Ghost.h"
 #include "Map.h"
 #include "pacman.h"
+#include <SFML/Audio.hpp> 
 
 
 class GhostsTale_v1App : public aie::Application {
@@ -76,16 +77,9 @@ protected:
 
 	float tileSize;
 
+	sf::SoundBuffer buffer;
+	sf::Sound sound;
 	
-	
-	
-	/*struct tilesSurrounding
-	{
-		int left;
-		int right;
-		int down;
-		int up;
-	};*/
 	
 
 };

@@ -9,6 +9,7 @@
 #include "Ghost.h"
 #include "Map.h"
 #include "pacman.h"
+#include <assert.h>
 
 using namespace std;
 
@@ -28,6 +29,7 @@ GhostsTale_v1App::GhostsTale_v1App() {
 GhostsTale_v1App::~GhostsTale_v1App() {
 
 }
+
 
 bool GhostsTale_v1App::startup() {
 	
@@ -63,10 +65,12 @@ bool GhostsTale_v1App::startup() {
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("./bin/font/consolas.ttf", 32);
 
+	
+	assert (buffer.loadFromFile("F:/aieBootstrap-master/GhostTaleRepos/GhostsTale_v1/GhostsTale_v1/bin/sounds/pacman_chomp.wav"));
+	sound.setBuffer(buffer);
+	sound.setVolume(10);
 
 	m_timer = 0;
-
-
 
 	return true;
 }
@@ -379,8 +383,14 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 
 	const int collisionPoints = 8;
 	int collisions[collisionPoints]{tileToTopRight,tileToTopLeft,tileToBotRight,tileToBotLeft,tileLeftDown,tileLeftUp,tileRightDown,tileRightUp };
+	
 
-	//PlaySound(L".bin\\sounds\\pacman_chomp.wav", NULL, SND_SYNC);
+	if (sound.getStatus() == sf::SoundSource::Status::Stopped)
+	{
+		sound.play();
+	}
+	
+		
 
 	if (player->Collided() == false)
 	{
