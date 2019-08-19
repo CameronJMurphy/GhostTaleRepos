@@ -23,9 +23,10 @@ public:
 
 	void playerMovement(float deltaTime);//playerMovement
 	
-
+	void playChomp();
 	
-
+	void changeVolume(int volume);
+	
 
 protected:
 
@@ -38,8 +39,8 @@ protected:
 	aie::Texture*		title;
 	aie::Texture*		settingsButtonTexture;
 	aie::Texture*		startButtonTexture;
-	aie::Texture*		upArrow;
-	aie::Texture*		downArrow;
+	aie::Texture*		VolumeUpTexture;
+	aie::Texture*		VolumeDownTexture;
 	aie::Texture*		pacmanPreyVersion;
 	
 	
@@ -50,21 +51,27 @@ protected:
 	const int enemyCount = 4;
 	int lastButtonPress;
 	
-	Pacman* deadPacman[4];
+
 
 	int state = 0;
 
+	
+
 	float m_timer;
 
-	int startButtonPosX = getWindowWidth() / 2;
-	int startButtonPosY = getWindowWidth() / 2;
+	
 	int startButtonHeight = 150;
 	int startButtonWidth = 300;
 
-	int settingsButtonPosX = getWindowWidth() / 2;
-	int settingsButtonPosY = getWindowWidth() / 2 - 100;
+	
 	int settingsButtonHeight = 100;
 	int settingsButtonWidth = 200;
+
+	int volumeUpButtonHeight = 50;
+	int volumeUpButtonWidth = 50;
+
+	int volumeDownButtonHeight = 50;
+	int volumeDownButtonWidth = 50;
 
 	int ghostPosX = 50;
 	int ghostPosY = 50;
@@ -77,9 +84,10 @@ protected:
 
 	float tileSize;
 
-	sf::SoundBuffer buffer;
-	sf::Sound sound;
+	sf::SoundBuffer chompBuffer;
+	sf::Sound chompSound;
 	
-	
+	sf::SoundBuffer musicBuffer;
+	sf::Sound music;
 
 };

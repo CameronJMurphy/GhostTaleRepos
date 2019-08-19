@@ -54,6 +54,6 @@ public:
 
 	void resetRespawnTimer();
 
-	bool preyTimer();
+	bool preyTimer(float deltaTime);
 
 };

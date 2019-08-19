@@ -63,9 +63,7 @@ void Pacman::reset()
 	currentPosX = startPosX;
 	currentPosY = startPosY;
 	respawnTimer = -1;
-	preyCurrentTime = 0;
-	preyCurrentTime = 0;
-	bool predator = true;
+	turnToPredator();
 }
 
 bool Pacman::isColliding(ghost* player)
@@ -89,6 +87,7 @@ void Pacman::die()
 	respawnTimer = 0;
 	currentPosX = 100000;//storing the pacman off screen
 	currentPosY = 100000;//storing the pacman off screen
+	turnToPredator();
 }
 
 bool Pacman::respawnCheck()
@@ -118,18 +117,19 @@ void Pacman::turnToPrey()
 void Pacman::turnToPredator()
 {
 	predator = true;
+	preyCurrentTime = 0;
 }
 
-bool Pacman::preyTimer()
+bool Pacman::preyTimer(float deltaTime)
 {
-	if (preyCurrentTime == preyStateLength)
+	if (preyCurrentTime > preyStateLength)
 	{
 		preyCurrentTime = 0;
 		return true;
 	}
 	else if (preyCurrentTime <= preyStateLength)
 	{
-		++preyCurrentTime;
+		++preyCurrentTime * deltaTime;
 		return false;
 	}
 }

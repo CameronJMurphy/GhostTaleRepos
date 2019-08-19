@@ -17,7 +17,6 @@ enum
 {
 	Title,
 	Menu,
-	Settings,
 	Game,
 	Win
 };
@@ -32,7 +31,7 @@ GhostsTale_v1App::~GhostsTale_v1App() {
 
 
 bool GhostsTale_v1App::startup() {
-	
+
 	m_2dRenderer = new aie::Renderer2D();
 	//setup textures
 	wallTile = new aie::Texture("./bin/textures/grass.png");
@@ -42,8 +41,8 @@ bool GhostsTale_v1App::startup() {
 	title = new aie::Texture("./bin/textures/Title.png");
 	settingsButtonTexture = new aie::Texture("./bin/textures/SettingsButton.png");
 	startButtonTexture = new aie::Texture("./bin/textures/StartButton.png");
-	upArrow = new aie::Texture("./bin/textures/UpArrow.png");
-	downArrow = new aie::Texture("./bin/textures/DownArrow.png");
+	VolumeUpTexture = new aie::Texture("./bin/textures/VolumeUp.png");
+	VolumeDownTexture = new aie::Texture("./bin/textures/VolumeDown.png");
 	pacmanPreyVersion = new aie::Texture("./bin/textures/pacmanPrey.png");
 
 	player = new ghost();
@@ -55,10 +54,7 @@ bool GhostsTale_v1App::startup() {
 	pacman[2] = new Pacman(level, 600, 200, 80);
 	pacman[3] = new Pacman(level, 200, 600, 90);
 	
-	deadPacman[0] = new Pacman(level, 10000, 10000, 0);
-	deadPacman[1] = new Pacman(level, 10000, 10000, 0);
-	deadPacman[2] = new Pacman(level, 10000, 10000, 0);
-	deadPacman[3] = new Pacman(level, 10000, 10000, 0);
+	
 	
 
 	// TODO: remember to change this when redistributing a build!
@@ -66,9 +62,13 @@ bool GhostsTale_v1App::startup() {
 	m_font = new aie::Font("./bin/font/consolas.ttf", 32);
 
 	
-	assert (buffer.loadFromFile("F:/aieBootstrap-master/GhostTaleRepos/GhostsTale_v1/GhostsTale_v1/bin/sounds/pacman_chomp.wav"));
-	sound.setBuffer(buffer);
-	sound.setVolume(10);
+	assert (chompBuffer.loadFromFile("F:/aieBootstrap-master/GhostTaleRepos/GhostsTale_v1/GhostsTale_v1/bin/sounds/pacman_chomp.wav"));
+	chompSound.setBuffer(chompBuffer);
+	chompSound.setVolume(3);
+
+	assert(musicBuffer.loadFromFile("F:/aieBootstrap-master/GhostTaleRepos/GhostsTale_v1/GhostsTale_v1/bin/sounds/music.wav"));
+	music.setBuffer(musicBuffer);
+	music.setVolume(9);
 
 	m_timer = 0;
 
@@ -87,7 +87,6 @@ void GhostsTale_v1App::shutdown() {
 	for (int i = 0; i < enemyCount; ++i)
 	{
 		delete pacman[i];
-		//delete deadPacman[i];
 	}
 }
 
@@ -97,6 +96,24 @@ void GhostsTale_v1App::update(float deltaTime) {
 	aie::Input* input = aie::Input::getInstance();
 	const unsigned int windowHeight = getWindowHeight();
 	const unsigned int windowWidth = getWindowWidth();
+
+	
+	int counter = 0;
+	for (int i = aie::INPUT_KEY_0; i <= aie::INPUT_KEY_9; ++i)//if the user press between 0 and 9 it will change the volume of the music and sound effects
+	{
+		if (input->isKeyDown(i))
+		{
+			chompSound.setVolume(counter / 3);
+			music.setVolume(counter);
+			counter = 0;
+		}
+		++counter;
+	}
+
+	if (music.getStatus() == sf::SoundSource::Status::Stopped)//this stops overlap of music
+	{
+		music.play();
+	}
 
 	if (state != Game)//While it isn't game. Ive done this to improve performance while the game is running.
 	{
@@ -135,25 +152,11 @@ void GhostsTale_v1App::update(float deltaTime) {
 			{
 				state = Game;
 			}
-			if (SettingsButton.IsMouseOver(x, y))
-			{
-				state = Settings;
-			}
 
 
 		}
 
 
-
-		////////////////////	SETTINGS	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		else if (state == Settings)
-		{
-			if (input->isKeyDown(aie::INPUT_KEY_BACKSPACE))
-			{
-				state = Menu;
-			}
-		}
 	}
 
 
@@ -180,17 +183,19 @@ void GhostsTale_v1App::update(float deltaTime) {
 				
 			}
 		}
-		if (pacman[1]->isPredator() == false)
+		for (int i = 0; i < enemyCount; ++i)
 		{
-			for (int i = 0; i < enemyCount; ++i)
+			if (pacman[i]->isPredator() == false)//check to see if at least one of the pacman are in a prey state
 			{
-				if (pacman[i]->preyTimer())
+
+				if (pacman[i]->preyTimer(deltaTime))
 				{
 					pacman[i]->turnToPredator();
 				}
-				
+
 			}
 		}
+		//++counter;
 
 		//if any of the pacman are touching the player, you lose the game
 
@@ -210,7 +215,6 @@ void GhostsTale_v1App::update(float deltaTime) {
 			}
 			else if (pacman[i]->isColliding(player) && pacman[i]->isPredator() == false)
 			{
-				//deadPacman[i] = pacman[i];
 				pacman[i]->die();
 			}
 		}
@@ -222,8 +226,6 @@ void GhostsTale_v1App::update(float deltaTime) {
 			if (pacman[i]->respawnCheck() == true)
 			{
 				pacman[i]->reset();
-				//delete deadPacman[i];
-				//deadPacman[i] = new Pacman{ level, 10000, 10000, 0 };
 			}
 		}
 		
@@ -265,8 +267,13 @@ void GhostsTale_v1App::draw() {
 	input->getMouseXY(&x, &y);
 	int HalfOfWindowWidth = getWindowWidth() / 2;
 	int HalfOfWindowHeight = getWindowHeight() / 2;
+
 	Button StartButton(HalfOfWindowWidth, HalfOfWindowHeight, startButtonWidth, startButtonHeight);
 	Button SettingsButton(HalfOfWindowWidth, HalfOfWindowHeight - 150, settingsButtonWidth, settingsButtonHeight);
+
+	Button VolumeUp(HalfOfWindowWidth, HalfOfWindowHeight, volumeUpButtonWidth, volumeUpButtonHeight);
+	Button VolumeDown(HalfOfWindowWidth, HalfOfWindowHeight - 150, volumeDownButtonWidth, volumeDownButtonHeight);
+
 	
 	float tileSize = getWindowHeight() / 21;
 	
@@ -289,20 +296,8 @@ void GhostsTale_v1App::draw() {
 		//print menu
 		
 		StartButton.Draw(m_2dRenderer, startButtonTexture);
-		SettingsButton.Draw(m_2dRenderer, settingsButtonTexture);
+		//SettingsButton.Draw(m_2dRenderer, settingsButtonTexture);
 
-		break;
-	case Settings:
-		//print settings 
-
-		//music up and down arrows
-		m_2dRenderer->drawText(m_font, "Music volume", 650, 500);
-		m_2dRenderer->drawSprite(upArrow, 650, 600, 100, 100);
-		m_2dRenderer->drawSprite(downArrow, 650, 400, 100, 100);
-		//FX up and down arrows
-		m_2dRenderer->drawText(m_font, "FX volume", 650, 200);
-		m_2dRenderer->drawSprite(upArrow, 650, 300, 100, 100);
-		m_2dRenderer->drawSprite(downArrow, 650, 100, 100, 100);
 		break;
 	case Game:
 		//startGame
@@ -338,7 +333,7 @@ void GhostsTale_v1App::draw() {
 	sprintf_s(fps, 64, "FPS: %i", getFPS());
 	if (state != Game)
 	{
-		m_2dRenderer->drawText(m_font, "Press ESC to quit", 10, 10);
+		m_2dRenderer->drawText(m_font, "Press between 0 & 9 to change volume", 35, 20);
 	}
 
 	// done drawing sprites
@@ -384,11 +379,6 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 	const int collisionPoints = 8;
 	int collisions[collisionPoints]{tileToTopRight,tileToTopLeft,tileToBotRight,tileToBotLeft,tileLeftDown,tileLeftUp,tileRightDown,tileRightUp };
 	
-
-	if (sound.getStatus() == sf::SoundSource::Status::Stopped)
-	{
-		sound.play();
-	}
 	
 		
 
@@ -402,7 +392,8 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 
 			if (tilePlayerIsOn == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 			{
-				player->collectDrop();
+				player->collectDrop(); // add 1 to the players ghost drop collection
+				playChomp(); //this is a sound effect
 				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 				if (level->levelXpos(player->xPos()) == 20 && level->levelYpos(player->yPos()) == 11)//if your at the opening on the right side, teleport to the left side
 				{
@@ -419,6 +410,7 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 			if (tilePlayerIsOn == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 			{
 				player->collectDrop();
+				playChomp(); //this is a sound effect
 				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 
 			}
@@ -435,6 +427,7 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 			if (tilePlayerIsOn == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 			{
 				player->collectDrop();
+				playChomp(); //this is a sound effect
 				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 			}
 		}
@@ -446,6 +439,7 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 			if (tilePlayerIsOn == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 			{
 				player->collectDrop();
+				playChomp(); //this is a sound effect
 				level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 			}
 		}
@@ -461,6 +455,7 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 				if (tilePlayerIsOn == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 				{
 					player->collectDrop();
+					playChomp(); //this is a sound effect
 					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 
 				}
@@ -477,6 +472,7 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 				if (tilePlayerIsOn == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 				{
 					player->collectDrop();
+					playChomp(); //this is a sound effect
 					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 
 				}
@@ -493,6 +489,7 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 				if (tilePlayerIsOn == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 				{
 					player->collectDrop();
+					playChomp(); //this is a sound effect
 					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 				}
 			}
@@ -504,6 +501,7 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 				if (tilePlayerIsOn == 8)//if the tile they just moved to had a ghost drop, increase ghost drop count
 				{
 					player->collectDrop();
+					playChomp(); //this is a sound effect
 					level->updateMap(player->xPos(), player->yPos(), 0);//change to the map's 8 to a 0, this displays a blank space
 				}
 			}
@@ -526,3 +524,17 @@ void GhostsTale_v1App::playerMovement(float deltaTime)
 	}
 }
 
+
+void GhostsTale_v1App::playChomp()
+{
+	if (chompSound.getStatus() == sf::SoundSource::Status::Stopped)
+	{
+		chompSound.play();
+	}
+}
+
+void GhostsTale_v1App::changeVolume(int volume)
+{
+	chompSound.setVolume(volume / 3);
+	music.setVolume(volume);
+}
