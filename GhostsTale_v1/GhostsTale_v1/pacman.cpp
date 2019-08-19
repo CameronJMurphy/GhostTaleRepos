@@ -82,11 +82,11 @@ bool Pacman::isPredator()
 	return predator;
 }
 
-void Pacman::die()
+void Pacman::die(float tileSize)
 {
 	respawnTimer = 0;
-	currentPosX = 100000;//storing the pacman off screen
-	currentPosY = 100000;//storing the pacman off screen
+	currentPosX = 10.5 * tileSize;//storing the pacman incage
+	currentPosY = 11.5 * tileSize;
 	turnToPredator();
 }
 

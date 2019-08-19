@@ -215,7 +215,7 @@ void GhostsTale_v1App::update(float deltaTime) {
 			}
 			else if (pacman[i]->isColliding(player) && pacman[i]->isPredator() == false)
 			{
-				pacman[i]->die();
+				pacman[i]->die(tileSize);
 			}
 		}
 

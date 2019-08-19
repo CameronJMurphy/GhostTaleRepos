@@ -48,7 +48,7 @@ public:
 	void turnToPrey();
 	void turnToPredator();
 	
-	void die();
+	void die(float tileSize);
 
 	bool respawnCheck();
 
