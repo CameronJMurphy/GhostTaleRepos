@@ -62,11 +62,15 @@ bool GhostsTale_v1App::startup() {
 	m_font = new aie::Font("./bin/font/consolas.ttf", 32);
 
 	
-	assert (chompBuffer.loadFromFile("F:/aieBootstrap-master/GhostTaleRepos/GhostsTale_v1/GhostsTale_v1/bin/sounds/pacman_chomp.wav"));
+	//assert (chompBuffer.loadFromFile("F:/aieBootstrap-master/GhostTaleRepos/GhostsTale_v1/GhostsTale_v1/bin/sounds/pacman_chomp.wav"));
+	bool chompBufferWorked = chompBuffer.loadFromFile("./bin/sounds/pacman_chomp.wav");
+	assert(chompBufferWorked);
 	chompSound.setBuffer(chompBuffer);
 	chompSound.setVolume(3);
 
-	assert(musicBuffer.loadFromFile("F:/aieBootstrap-master/GhostTaleRepos/GhostsTale_v1/GhostsTale_v1/bin/sounds/music.wav"));
+	//assert(musicBuffer.loadFromFile("F:/aieBootstrap-master/GhostTaleRepos/GhostsTale_v1/GhostsTale_v1/bin/sounds/music.wav"));
+	bool musicBufferWorked = musicBuffer.loadFromFile("./bin/sounds/music.wav");
+	assert(musicBufferWork);
 	music.setBuffer(musicBuffer);
 	music.setVolume(9);
 
